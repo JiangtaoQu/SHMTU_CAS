@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/img">
+        <file>logopng.fw.ico</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>项目文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AssemblyInfo.cpp">
+      <Filter>项目文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SHMTU_CAS_CLR_ClassLibrary.cpp">
+      <Filter>接口</Filter>
+    </ClCompile>
+    <ClCompile Include="..\NCNN_CLI\CAS_OCR.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Resource.h">
+      <Filter>项目文件</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>项目文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SHMTU_CAS_CLR_ClassLibrary.h">
+      <Filter>接口</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NCNN_CLI\CAS_OCR.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{a77f37fb-3680-47db-9c29-5e7942abe12e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{48c990a5-b69e-4551-8c16-35cc35a37962}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="项目文件">
+      <UniqueIdentifier>{532e709e-7a8f-4b0d-b2a7-a6a2a87bae61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="接口">
+      <UniqueIdentifier>{657efc14-2524-4323-b70c-2f8898c33ade}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{75080f64-4e03-414c-84a2-c5cac3bea230}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="app.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="app.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

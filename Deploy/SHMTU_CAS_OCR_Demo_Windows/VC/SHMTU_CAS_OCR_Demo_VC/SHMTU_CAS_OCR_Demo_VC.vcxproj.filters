@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="ImageUtils.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SHMTU_CAS_URL.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WinMain1.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowUtils.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectUtils.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VCUtils.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\NCNN_CLI\CAS_OCR.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ImageUtils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SHMTU_CAS_URL.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WinMain1.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowUtils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>项目文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>项目文件</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>项目文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectUtils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="VCUtils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NCNN_CLI\CAS_OCR.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{038aa309-707c-4e8a-90ef-18787c7eb1f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{2dd28b22-fd18-40a6-9802-6e9de137b2c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="项目文件">
+      <UniqueIdentifier>{45fe8878-c5d4-460c-ae06-faf9926d5989}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{bd9e0bf9-db28-483a-be88-8d8db91a4d67}</UniqueIdentifier>
+      <Extensions>*.cpp</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CAS_OCR_Demo.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="logopng.fw.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
