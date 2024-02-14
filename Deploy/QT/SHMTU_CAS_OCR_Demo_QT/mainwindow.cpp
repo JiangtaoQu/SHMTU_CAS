@@ -42,6 +42,7 @@ void MainWindow::on_pushButton_DownloadUrl_clicked() {
 }
 
 void MainWindow::on_pushButton_ocr_clicked() {
+
     if (_innerBitmap.isNull()) {
         ui->statusbar->showMessage("错误：请先下载或打开图片!");
         QMessageBox msgBox;
@@ -83,6 +84,8 @@ void MainWindow::on_pushButton_ocr_clicked() {
         // android
 #elif defined(__linux__)
         // linux
+        checkpoint_path =
+                    "/media/konghaomin/PM963/SHMTU/shmtu-cas/Deploy/SHMTU_CAS_OCR_Demo_Android/shmtu_ocr/src/main/assets";
 #endif
 
 #endif
@@ -175,12 +178,12 @@ void MainWindow::on_pushButton_OpenLocal_clicked() {
 void MainWindow::SetPixelMapToLabel(QLabel *label, const QPixmap &pixmap) {
     if (pixmap.isNull()) {
         std::cerr << "Pixmap is null!" << std::endl;
-        qDebug() << "Pixmap is empty!";
+        // qDebug() << "Pixmap is empty!";
     } else {
 #ifdef _DEBUG
         std::cout << "Pixmap is correct!" << std::endl;
 #endif
-        qDebug() << "Pixmap is correct!";
+        // qDebug() << "Pixmap is correct!";
     }
 
     _innerBitmap = pixmap.copy();

@@ -6,7 +6,21 @@ if (WIN32)
     set(CMAKE_PREFIX_PATH "D:/Dev/Qt/6.6.1/msvc2019_64")
 elseif (APPLE)
     set(CMAKE_PREFIX_PATH "/Users/konghaomin/Dev/Qt/Qt/6.6.1/macos")
+elseif(LINUX)
+    set(CMAKE_PREFIX_PATH "/home/konghaomin/Dev/Qt/Qt/6.6.1/gcc_64")
 endif ()
+
+# 设置默认的构建类型为Debug，如果不指定构建类型的话
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    message(STATUS "Setting build type to 'Debug' as none was specified.")
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)
+endif()
+
+# 检查构建类型是否为Debug
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(STATUS "Configuring Debug Mode")
+    add_definitions(-DDEBUG_MODE)
+endif()
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -32,6 +46,8 @@ if (WIN32)
             ncnn_DIR
             H:/SHMTU/shmtu-cas/Deploy/SHMTU_CAS_OCR_Demo_Windows/VC/3rdparty/ncnn/ncnn_build/install/lib/cmake/ncnn
     )
+elseif (LINUX)
+    set(ncnn_DIR /home/konghaomin/ncnn/ncnn-20240102-ubuntu-2204/lib/cmake/ncnn)
 endif ()
 
 find_package(OpenCV REQUIRED)
