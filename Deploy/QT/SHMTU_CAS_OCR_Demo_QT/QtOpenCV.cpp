@@ -4,26 +4,26 @@
 
 #include <opencv2/imgproc.hpp>
 
-namespace QtOpenCV{
+namespace QtOpenCV {
     // 将 cv::Mat 转换为 QPixmap
     QPixmap CvMatToQPixmap(const cv::Mat &mat) {
         QImage image(
-                mat.data,
-                mat.cols, mat.rows,
-                static_cast<int>(mat.step),
-                QImage::Format_RGB888
+            mat.data,
+            mat.cols, mat.rows,
+            static_cast<int>(mat.step),
+            QImage::Format_RGB888
         );
         return QPixmap::fromImage(image.rgbSwapped());
     }
 
-// 将 QPixmap 转换为 cv::Mat
+    // 将 QPixmap 转换为 cv::Mat
     cv::Mat QPixmapToCvMat(const QPixmap &pixmap) {
         QImage image =
                 pixmap.toImage().convertToFormat(QImage::Format_RGB888);
         cv::Mat mat(
-                image.height(), image.width(), CV_8UC3,
-                const_cast<uchar *>(image.bits()),
-                static_cast<size_t>(image.bytesPerLine())
+            image.height(), image.width(), CV_8UC3,
+            const_cast<uchar *>(image.bits()),
+            static_cast<size_t>(image.bytesPerLine())
         );
 
         // OpenCV 默认使用 BGR 顺序

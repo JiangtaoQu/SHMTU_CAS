@@ -8,11 +8,11 @@ QPixmap DownloadQPixmapFromUrl(const std::string &url) {
     QNetworkAccessManager manager;
     QEventLoop loop;
     QNetworkReply *reply = manager.get(
-            QNetworkRequest(
-                    QUrl(
-                            QString::fromStdString(url)
-                    )
+        QNetworkRequest(
+            QUrl(
+                QString::fromStdString(url)
             )
+        )
     );
     QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
     loop.exec();

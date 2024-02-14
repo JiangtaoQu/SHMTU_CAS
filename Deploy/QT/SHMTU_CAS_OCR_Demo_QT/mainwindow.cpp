@@ -86,7 +86,7 @@ void MainWindow::on_pushButton_ocr_clicked() {
 #elif defined(__linux__)
         // linux
         checkpoint_path =
-                    "/media/konghaomin/PM963/SHMTU/shmtu-cas/Deploy/SHMTU_CAS_OCR_Demo_Android/shmtu_ocr/src/main/assets";
+                "/media/konghaomin/PM963/SHMTU/shmtu-cas/Deploy/SHMTU_CAS_OCR_Demo_Android/shmtu_ocr/src/main/assets";
 #endif
 
 #endif

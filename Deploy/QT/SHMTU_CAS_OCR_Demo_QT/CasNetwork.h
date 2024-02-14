@@ -6,10 +6,8 @@
 #define SHMTU_CAS_OCR_DEMO_QT_CAS_NETWORK_H
 
 #include <QApplication>
-#include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QPixmap>
-#include <QUrl>
 
 QPixmap DownloadQPixmapFromUrl(const std::string &url);
 

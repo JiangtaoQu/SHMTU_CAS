@@ -5,13 +5,15 @@
 #include <QLabel>
 
 QT_BEGIN_NAMESPACE
+
 namespace Ui {
     class MainWindow;
 }
+
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
@@ -19,7 +21,6 @@ public:
     ~MainWindow() override;
 
 private slots:
-
     void on_pushButton_DownloadUrl_clicked();
 
     void on_pushButton_ocr_clicked();

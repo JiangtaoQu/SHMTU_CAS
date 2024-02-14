@@ -7,6 +7,6 @@
 
 #include <QPushButton>
 
-void setQPushButtonFixedSize(QPushButton* button);
+void setQPushButtonFixedSize(QPushButton *button);
 
 #endif //SHMTU_CAS_OCR_DEMO_QT_QT_UI_HELPER_H

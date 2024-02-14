@@ -10,7 +10,7 @@
 
 namespace CAS_OCR {
     std::tuple<int, std::string, int, int, int, int>
-    predict_validate_code(const QPixmap &image_input, bool use_gpu=true);
+    predict_validate_code(const QPixmap &image_input, bool use_gpu = true);
 }
 
 #endif //SHMTU_CAS_OCR_DEMO_QT_CAS_OCR_QT_H
