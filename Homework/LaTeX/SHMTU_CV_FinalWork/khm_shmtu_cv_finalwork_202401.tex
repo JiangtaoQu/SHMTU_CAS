@@ -1,0 +1,113 @@
+% !TEX program = xelatex
+%*********************************************************************
+%  SHMTU Course Thesis
+% 上海海事大学 课程论文 LaTeX 模板
+% Copyright 2023 Haomin Kong
+% 2023/11/07 v1.0 beta 0001
+%*********************************************************************
+
+% 请注意\chapter只能用于 book 或者 report，不能用于 article
+%\documentclass[a4paper,12pt,UTF8]{ctexart}
+
+\documentclass[UTF8,a4paper,12pt,titlepage,oneside]{ctexbook}
+
+% 导入包以及一些定义
+\input{Template/PkgTemplate.tex}
+\input{Template/MyZiHao.tex}
+
+% 格式
+\input{Template/Format.tex}
+
+% 页眉：学校Logo：
+% 页码采用10.5号宋体字，居中放置，格式为：第1页。
+% 设置页面样式为fancy
+\pagestyle{fancy}
+% 清空左页眉内容
+\lhead{}
+%\chead{\includegraphics[width = 4.13cm,height = 0.98cm]{head.png}}
+% 清空右页眉内容
+\rhead{}
+% 清空左页脚内容
+\lfoot{}
+% 清空右页脚内容
+\rfoot{}
+
+% 目录和引用超链接
+\hypersetup{
+	colorlinks=true,
+	linkcolor=black,
+	citecolor=black
+}
+
+\begin{document}
+
+\newcommand\dunderline[3][-1pt]{{%
+			\setbox0=\hbox{#3}
+			\ooalign{\copy0\cr\rule[\dimexpr#1-#2\relax]{\wd0}{#2}}}}
+
+% 标题页
+\include{Chapter/TitlePage.tex}
+
+% 封皮后面不是摘要，而是空白页！
+\emptypage
+
+
+%\makedeclare
+
+% 引言
+%\include{Chapter/Abstract.tex}
+
+% 目录
+\include{Chapter/Catalog.tex}
+
+% 重置起始数字，以及定义样式
+\newpage
+\setcounter{page}{1}
+\setcounter{table}{0}
+\setcounter{figure}{0}
+\pagenumbering{arabic}
+\pagestyle{fancy}
+% TODO:页眉设置
+\chead{上海海事大学课程设计}
+% TODO:页脚的页码格式
+\cfoot{\footnotesize \thepage }
+
+
+% 按照自然段依次排列，每段起行空两格，回行顶格。12号宋体字，（重点文句，12号宋体字，加粗），1.5倍行距。
+%正文、注释双面打印，编排页码，自第1页起，设置页眉。
+
+% TODO:设置行距
+\begin{spacing}{1.5}
+
+	% 正文
+	% TODO:正文字号设置(请参考MyZiHao.tex)
+	\xiaosi
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	% 将表格计数器的值设置为0，表示从当前位置重新开始对表格进行编号。
+	\setcounter{table}{0}
+	% 将图片计数器的值设置为0，表示从当前位置重新开始对图片进行编号。
+	\setcounter{figure}{0}
+	% 以上命令通常在文档中的某个位置使用，以重新开始对表格和图片的编号。
+	% 这在需要重新排列表格和图片的顺序或在文档的某个特定部分重新开始编号时非常有用。
+
+	\include{Chapter/MainBody/Chapter.1.tex}
+	\include{Chapter/MainBody/Chapter.2.tex}
+	\include{Chapter/MainBody/Chapter.3.tex}
+	\include{Chapter/MainBody/Chapter.4.tex}
+	\include{Chapter/MainBody/Chapter.5.tex}
+	\include{Chapter/MainBody/Chapter.6.tex}
+	\include{Chapter/MainBody/Chapter.7.tex}
+	\include{Chapter/MainBody/Chapter.8.tex}
+	\include{Chapter/MainBody/Chapter.9.tex}
+	\include{Chapter/MainBody/Chapter.10.tex}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	% 总结
+	\include{Chapter/MainBody/Chapter.11.tex}
+
+\end{spacing}
+
+% 参考文献
+\include{References/ref.tex}
+
+\end{document}

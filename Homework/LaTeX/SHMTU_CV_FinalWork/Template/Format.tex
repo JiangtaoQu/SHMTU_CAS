@@ -1,0 +1,69 @@
+% 图表目录重定义
+% https://blog.csdn.net/ningxuanyu5854/article/details/80307707
+% 为图片添加章节号，不需要请注释下面两行！
+\renewcommand {\thetable} {\thesection{}.\arabic{table}}
+\renewcommand {\thefigure} {\thesection{}.\arabic{figure}}
+
+% 公式编号添加章节
+\numberwithin{equation}{section}
+%\numberwithin{subfigure}{section}
+
+%\CTEXsetup[number={\chinese{section}}]{section}
+%\CTEXsetup[name={（,）},number={\chinese{subsection}}]{subsection}
+%\CTEXsetup[number={\arabic{subsubsection}}]{subsubsection}
+
+% 字体
+\usepackage{CJKutf8}
+\setCJKfamilyfont{SimHei}{simhei.ttf}
+\newcommand{\SimHei}{\CJKfamily{SimHei}}
+% Windows 黑体
+%\newcommand{\SimHei}{\fontspec{SimHei}}
+% macOS  黑体
+%\newcommand{\SimHei}{\fontspec{STHeitiSC-Light}}
+
+% 字号
+% https://blog.csdn.net/weixin_44026026/article/details/104096778
+% https://zhuanlan.zhihu.com/p/464244924
+% TODO:标题格式设置
+\ctexset{
+	% 修改 section。
+	section={
+	  %name={,.},
+	  %number={\chinese{section}},
+	  %number={\arabic{section}},
+	  format=\SimHei\heiti\zihao{4} % 设置 section 标题为黑体、4号字
+	},
+	% 修改 subsection。
+	subsection={
+			%name={,.},
+			%number={\arabic{subsection}},
+			format=\SimHei\heiti\zihao{4} % 设置 subsection 标题为黑体、4号字
+	},
+	% 修改 subsubsection。
+	subsubsection={
+			%name={,.},
+			number={\arabic{chapter}.\arabic{section}.\arabic{subsection}.\arabic{subsubsection}},
+			format=\SimHei\heiti\zihao{4} % 设置 subsubsection 标题为黑体、4号字
+	}
+}
+% 让目录支持subsubsection
+\setcounter{tocdepth}{3}
+% 让subsubsection前面正确显示标号
+\setcounter{secnumdepth}{3}
+%\renewcommand{\thesubsubsection}{\arabic{chapter}.\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}
+
+% 设置目录以及标题的阿拉伯数字的字体
+%\renewcommand\thesection{{\fontspec{SimHei}\arabic{section}}}
+
+
+%页边距设置示例：
+% 上（T）：2 cm
+% 下（B）：2 cm
+% 左（L）：1.5 cm
+% 右（R）：1.5 cm
+% 装订线（T）：0.5 cm
+% 装订线位置（T）：左
+%\geometry{a4paper,left = 2cm,right = 1.5cm,top = 2cm,bottom= 2cm}
+
+% TODO:页边距设置
+\geometry{a4paper, left = 3cm, right = 2.5cm, top = 3cm, bottom = 3cm}

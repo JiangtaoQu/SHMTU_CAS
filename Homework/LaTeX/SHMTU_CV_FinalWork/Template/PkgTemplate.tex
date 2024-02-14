@@ -1,0 +1,133 @@
+%*********************************************************************
+% template.tex
+% 本文件主要保存一些导入的包以及宏定义，一般无需修改！
+%*********************************************************************
+%  SHMTU Course Thesis
+% 上海海事大学 课程论文 LaTeX 模板
+% Copyright 2023 Haomin Kong
+% 2023/11/07 v1.0 beta 0001
+%
+% 本文来源于 UCASSthesis
+% 上述模板来源于人民大学论文模板，已经做了大幅度删改。
+% 版权仍归原作者所有。
+%*********************************************************************
+% 本模板修复大量 bug ，撰写大量注释，以及优化代码结构
+%*********************************************************************
+
+\usepackage{ctex}
+
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{cite}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{booktabs}
+\usepackage{multirow}
+
+% 页边距定义
+\usepackage{geometry}
+
+\usepackage{appendix}
+\usepackage{hyperref}
+\usepackage{enumerate}
+\usepackage{threeparttable}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage[T1]{fontenc}
+
+%Times New Roman字体
+\usepackage{mathptmx}
+
+\usepackage{titletoc}
+\usepackage{fontspec}
+\usepackage{pdfpages}
+\usepackage{tikz}
+\usepackage{etoolbox}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{array}
+\usepackage{amssymb}
+\usepackage{zhlipsum}
+
+% 显示代码
+\usepackage{listings}
+\usepackage{xcolor}
+
+\usepackage{algpseudocode}
+
+
+% 矩阵虚线
+% https://blog.csdn.net/bulubuluzst/article/details/119918708
+\usepackage{arydshln}
+
+% https://zhuanlan.zhihu.com/p/32925549
+% 并排图插入下面三行
+%\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subfigure}
+
+% 使用enumitem宏包来设置enumerate环境的缩进
+\usepackage{enumitem}
+
+% 使用amsmath宏包提供的数学环境和命令
+\usepackage{amsmath}
+
+% 流程图
+\usepackage{tikz}
+\usetikzlibrary{positioning, shapes.geometric}
+
+% 英文字体设置为 Times New Roman
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+
+% %设置中文字体
+% \let\songti\relax
+% \let\heiti\relax
+% \let\fangsong\relax
+% \let\kaishu\relax
+
+% \newCJKfontfamily\sonti{方正书宋简体}[BoldFont=方正粗宋简体]
+% \newCJKfontfamily\heiti{方正黑体简体}[BoldFont=方正正粗黑简体]
+% \newCJKfontfamily\fangsong{方正仿宋简体}
+% \newCJKfontfamily\kaishu{方正楷体简体}[BoldFont=方正粗楷简体]
+
+% \setCJKmainfont{方正书宋简体}[BoldFont = 方正粗宋简体]
+% \setCJKsansfont{方正黑体简体}[BoldFont=方正正粗黑简体]
+% \setCJKmonofont{方正仿宋简体}
+
+% 参考文献引用上标
+% 请使用\upcite代替\cite
+\newcommand{\upcite}[1]{\textsuperscript{\textsuperscript{\cite{#1}}}}
+
+% 插入空白页
+\newcommand{\emptypage}{
+	\clearpage
+	\phantom{s}
+	\thispagestyle{empty}
+}
+
+% 将 lstlisting 的默认标签从 "Listing" 更改为 "代码示例"
+\renewcommand{\lstlistingname}{代码示例}
+
+% 设置代码高亮风格等其他选项
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{lightgray}{gray}{0.95}
+\lstset{
+	basicstyle=\ttfamily,
+	% basicstyle=\ttfamily\small,
+	numbers=left,
+	%numberstyle=\tiny,
+	keywordstyle=\color{blue},
+	commentstyle=\color{dkgreen},
+	stringstyle=\color{mauve},
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=2,
+	captionpos=b, % 设置标题位置在底部
+	frame=single, % 添加单线边框
+	framesep=5pt, % 边框与代码之间的间距
+	rulecolor=\color{black}, % 边框颜色
+	backgroundcolor=\color{lightgray}, % 设置背景颜色
+}

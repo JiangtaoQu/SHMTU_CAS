@@ -1,0 +1,55 @@
+% 中文摘要
+\newpage
+\renewcommand{\abstractname}{\textbf{\Large \heiti 摘要}}
+% book 与 article 在这里需要切换一下！
+%\renewenvironment{abstract}{%
+    \newenvironment{abstract}{%
+    \par\small
+    \noindent\mbox{}\hfill{\bfseries \abstractname}\hfill\mbox{}\par
+    \vskip 2.5ex}{\par\vskip 2.5ex}
+%中文摘要及关键词放在扉页一、外文摘要及关键词放在扉二，页码编排为Ⅰ，Ⅱ，设置页眉
+\begin{abstract}
+    %1.5倍行距
+    \begin{onehalfspace}
+
+        暂无。
+
+        %\\[12pt]
+        \textbf{\textbf{\heiti 关键词：}}李朝锋
+    \end{onehalfspace}
+\end{abstract}
+\chead{上海海事大学-期末总结}
+\setcounter{page}{1}
+\pagenumbering{Roman}
+\cfoot{\footnotesize \thepage}
+
+% 背面留空
+%\emptypage
+
+% 中文摘要和英文摘要在同一页，间隔行数
+\vspace{5\baselineskip}
+
+% 英文摘要
+% 英文摘要另起一页
+%\newpage
+
+\newcommand{\enabstractname}{\textbf{\Large Abstract}}
+\newenvironment{enabstract}{%
+    \par\small
+    \noindent\mbox{}\hfill{\bfseries \enabstractname}\hfill\mbox{}\par
+    \vskip 2.5ex}{\par\vskip 2.5ex}
+\begin{enabstract}
+    \begin{doublespace}
+
+        None
+
+        %\\[12pt]
+        \textbf{Keywords：}LCF;
+    \end{doublespace}
+\end{enabstract}
+% 英文摘要和中文摘要在同一页时选择一个页眉
+%\chead{Shanghai Maritime University Course Design}
+\cfoot{\thepage}
+
+% 背面留空
+\emptypage

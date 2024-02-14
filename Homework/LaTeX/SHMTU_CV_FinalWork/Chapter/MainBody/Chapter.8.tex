@@ -1,0 +1,36 @@
+\chapter{Microsoft Windows .Net 平台的部署及混合编译的探究}
+\label{chapter:8dotnet}
+
+
+
+\section{工作流程}
+
+\begin{enumerate}
+	\item .Net WPF显示界面
+	\item C\#下载图片或从本地加载图片
+	\item C\#程序通过CLR Connector这个C\#的中间层与CLR进行连接
+	\item CLR C++为C\#提供接口
+	\item CAS\_OCR.cpp相关逻辑
+\end{enumerate}
+
+\section{CLR程序设计}
+
+
+
+\section{CLR Connector程序设计}
+
+\section{运行截图}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{Resources/Picture/wpf_main}
+	\caption{WPF 主界面}
+	\label{fig:wpfmain}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{Resources/Picture/wpf_memory}
+	\caption{WPF程序内存占用(加载模型后)}
+	\label{fig:wpfmemory}
+\end{figure}
