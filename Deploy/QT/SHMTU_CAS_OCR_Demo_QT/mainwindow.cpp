@@ -66,7 +66,10 @@ void MainWindow::on_pushButton_ocr_clicked() {
 #ifdef _DEBUG
 
 #if defined(_WINDOWS)
-        checkpoint_path = R"(H:\SHMTU\SHMTU_CAS\Deploy\SHMTU_CAS_OCR_Demo_Windows\checkpoint)";
+        checkpoint_path =
+                R"(H:\SHMTU\shmtu-cas\Deploy\SHMTU_CAS_OCR_Demo_Windows\checkpoint)";
+#elif defined(Q_OS_MAC)
+        checkpoint_path = "/Your/MacOS/Checkpoint/Path";
 #endif
 
 #endif
@@ -75,7 +78,7 @@ void MainWindow::on_pushButton_ocr_clicked() {
     ui->statusbar->showMessage("正在加载模型...");
     CAS_OCR::init_model(
         checkpoint_path,
-        "fp32"
+        "fp16"
     );
     ui->statusbar->showMessage("模型加载完毕!正在识别...");
 
@@ -184,4 +187,5 @@ void MainWindow::on_actionDoOCR_triggered() {
 
 
 void MainWindow::on_actionAbout_triggered() {
+    close();
 }

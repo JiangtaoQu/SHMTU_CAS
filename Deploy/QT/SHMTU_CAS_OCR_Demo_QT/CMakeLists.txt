@@ -19,14 +19,14 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 # OpenCV
 set(
         OpenCV_DIR
-        H:/SHMTU/SHMTU_CAS/Deploy/SHMTU_CAS_OCR_Demo_Windows/VC/3rdparty/OpenCV/opencv5_build/install
+        H:/SHMTU/shmtu-cas/Deploy/SHMTU_CAS_OCR_Demo_Windows/VC/3rdparty/OpenCV/opencv5_build/install
 )
 find_package(OpenCV REQUIRED)
 
 # Tencent NCNN
 set(
         ncnn_DIR
-        H:/SHMTU/SHMTU_CAS/Deploy/SHMTU_CAS_OCR_Demo_Windows/VC/3rdparty/ncnn/ncnn_build/install/lib/cmake/ncnn
+        H:/SHMTU/shmtu-cas/Deploy/SHMTU_CAS_OCR_Demo_Windows/VC/3rdparty/ncnn/ncnn_build/install/lib/cmake/ncnn
 )
 find_package(ncnn REQUIRED)
 
