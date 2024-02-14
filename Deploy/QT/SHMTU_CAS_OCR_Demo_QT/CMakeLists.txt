@@ -2,7 +2,11 @@ cmake_minimum_required(VERSION 3.5)
 
 project(SHMTU_CAS_OCR_Demo_QT VERSION 0.1 LANGUAGES CXX)
 
-set(CMAKE_PREFIX_PATH "D:/Dev/Qt/6.6.1/msvc2019_64")
+if (WIN32)
+    set(CMAKE_PREFIX_PATH "D:/Dev/Qt/6.6.1/msvc2019_64")
+elseif (APPLE)
+    set(CMAKE_PREFIX_PATH "/Users/konghaomin/Dev/Qt/Qt/6.6.1/macos")
+endif ()
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -16,21 +20,28 @@ find_package(Qt6 COMPONENTS Network REQUIRED)
 
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 
-# OpenCV
-set(
-        OpenCV_DIR
-        H:/SHMTU/shmtu-cas/Deploy/SHMTU_CAS_OCR_Demo_Windows/VC/3rdparty/OpenCV/opencv5_build/install
-)
-find_package(OpenCV REQUIRED)
+if (WIN32)
+    # OpenCV
+    set(
+            OpenCV_DIR
+            H:/SHMTU/shmtu-cas/Deploy/SHMTU_CAS_OCR_Demo_Windows/VC/3rdparty/OpenCV/opencv5_build/install
+    )
 
-# Tencent NCNN
-set(
-        ncnn_DIR
-        H:/SHMTU/shmtu-cas/Deploy/SHMTU_CAS_OCR_Demo_Windows/VC/3rdparty/ncnn/ncnn_build/install/lib/cmake/ncnn
-)
+    # Tencent NCNN
+    set(
+            ncnn_DIR
+            H:/SHMTU/shmtu-cas/Deploy/SHMTU_CAS_OCR_Demo_Windows/VC/3rdparty/ncnn/ncnn_build/install/lib/cmake/ncnn
+    )
+endif ()
+
+find_package(OpenCV REQUIRED)
 find_package(ncnn REQUIRED)
 
-set(TS_FILES SHMTU_CAS_OCR_Demo_QT_zh_CN.ts)
+set(
+        TS_FILES
+
+        SHMTU_CAS_OCR_Demo_QT_zh_CN.ts
+)
 
 set(PROJECT_SOURCES
         ${TS_FILES}
@@ -60,33 +71,53 @@ set(PROJECT_SOURCES
         STD_CPP_Utils.h
 )
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(SHMTU_CAS_OCR_Demo_QT
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-        res.qrc
+# Set Icon
+if (WIN32)
+
+elseif (APPLE)
+    # 设置 macOS 应用程序的图标文件
+    set(MACOSX_BUNDLE_ICON_FILE icon.icns)
+
+    # 将图标文件添加到资源中
+    set_source_files_properties(
+            ${MACOSX_BUNDLE_ICON_FILE} PROPERTIES
+            MACOSX_PACKAGE_LOCATION "Resources"
     )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET SHMTU_CAS_OCR_Demo_QT APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
+endif ()
+
+if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_add_executable(
+            SHMTU_CAS_OCR_Demo_QT
+            MANUAL_FINALIZATION MACOSX_BUNDLE
+
+            ${PROJECT_SOURCES}
+
+            ${MACOSX_BUNDLE_ICON_FILE}
+
+            res.qrc
+    )
+
+    # Define target properties for Android with Qt 6 as:
+    #    set_property(TARGET SHMTU_CAS_OCR_Demo_QT APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
+    #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
+    # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 
     qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
-else()
-    if(ANDROID)
+else ()
+    if (ANDROID)
         add_library(SHMTU_CAS_OCR_Demo_QT SHARED
-            ${PROJECT_SOURCES}
+                ${PROJECT_SOURCES}
         )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
+        # Define properties for Android with Qt 5 after find_package() calls as:
+        #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+    else ()
         add_executable(SHMTU_CAS_OCR_Demo_QT
-            ${PROJECT_SOURCES}
+                ${PROJECT_SOURCES}
         )
-    endif()
+    endif ()
 
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
-endif()
+endif ()
 
 target_link_libraries(SHMTU_CAS_OCR_Demo_QT PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(SHMTU_CAS_OCR_Demo_QT PRIVATE Qt6::Network)
@@ -98,24 +129,24 @@ target_link_libraries(SHMTU_CAS_OCR_Demo_QT PRIVATE ${OpenCV_LIBS})
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
-if(${QT_VERSION} VERSION_LESS 6.1.0)
-  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.SHMTU_CAS_OCR_Demo_QT)
-endif()
+if (${QT_VERSION} VERSION_LESS 6.1.0)
+    set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.khm.shmtu.cas.ocr.demo)
+endif ()
 set_target_properties(SHMTU_CAS_OCR_Demo_QT PROPERTIES
-    ${BUNDLE_ID_OPTION}
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
+        ${BUNDLE_ID_OPTION}
+        MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+        MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+        MACOSX_BUNDLE TRUE
+        WIN32_EXECUTABLE TRUE
 )
 
 include(GNUInstallDirs)
 install(TARGETS SHMTU_CAS_OCR_Demo_QT
-    BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        BUNDLE DESTINATION .
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-if(QT_VERSION_MAJOR EQUAL 6)
+if (QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(SHMTU_CAS_OCR_Demo_QT)
-endif()
+endif ()

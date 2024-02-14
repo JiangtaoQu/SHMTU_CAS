@@ -68,8 +68,21 @@ void MainWindow::on_pushButton_ocr_clicked() {
 #if defined(_WINDOWS)
         checkpoint_path =
                 R"(H:\SHMTU\shmtu-cas\Deploy\SHMTU_CAS_OCR_Demo_Windows\checkpoint)";
-#elif defined(Q_OS_MAC)
-        checkpoint_path = "/Your/MacOS/Checkpoint/Path";
+#elif defined(__APPLE__)
+        checkpoint_path =
+                    "/Users/konghaomin/SHMTU/shmtu-cas/Deploy/SHMTU_CAS_OCR_Demo_Android/shmtu_ocr/src/main/assets";
+#if defined(TARGET_IPHONE_SIMULATOR)
+// iOS Simulator
+#elif defined(TARGET_OS_IPHONE)
+// iOS device
+#elif defined(TARGET_OS_MAC)
+        // Other kinds of Mac OS
+#endif
+
+#elif defined(__ANDROID__)
+// android
+#elif defined(__linux__)
+// linux
 #endif
 
 #endif
