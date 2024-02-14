@@ -73,7 +73,7 @@ set(PROJECT_SOURCES
 
 # Set Icon
 if (WIN32)
-
+    set(WINDOWS_ICON_RC_FILE "app_win32.rc")
 elseif (APPLE)
     # 设置 macOS 应用程序的图标文件
     set(MACOSX_BUNDLE_ICON_FILE icon.icns)
@@ -92,6 +92,9 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 
             ${PROJECT_SOURCES}
 
+            # Windows Icon
+            ${WINDOWS_ICON_RC_FILE}
+            # macOS Icon
             ${MACOSX_BUNDLE_ICON_FILE}
 
             res.qrc
