@@ -72,27 +72,41 @@ void MainWindow::on_pushButton_ocr_clicked() {
         checkpoint_path =
                     "/Users/konghaomin/SHMTU/shmtu-cas/Deploy/SHMTU_CAS_OCR_Demo_Android/shmtu_ocr/src/main/assets";
 #if defined(TARGET_IPHONE_SIMULATOR)
-// iOS Simulator
+        // iOS Simulator
 #elif defined(TARGET_OS_IPHONE)
-// iOS device
+        // iOS device
 #elif defined(TARGET_OS_MAC)
         // Other kinds of Mac OS
 #endif
 
 #elif defined(__ANDROID__)
-// android
+        // android
 #elif defined(__linux__)
-// linux
+        // linux
 #endif
 
 #endif
     }
 
     ui->statusbar->showMessage("正在加载模型...");
-    CAS_OCR::init_model(
+    const auto init_result = CAS_OCR::init_model(
         checkpoint_path,
         "fp16"
     );
+
+    if (!init_result) {
+        ui->statusbar->showMessage("模型失败!!!");
+
+        QMessageBox msgBox;
+        msgBox.setText("模型加载失败!\n请确认路径是否正确！");
+        msgBox.setWindowTitle("模型加载失败");
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.setStandardButtons(QMessageBox::Ok);
+
+        msgBox.exec();
+        return;
+    }
+
     ui->statusbar->showMessage("模型加载完毕!正在识别...");
 
     auto result =
