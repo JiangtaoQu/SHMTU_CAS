@@ -85,6 +85,8 @@ set(PROJECT_SOURCES
 
         STD_CPP_Utils.cpp
         STD_CPP_Utils.h
+
+        cross_platform_macro.h
 )
 
 # Set Icon

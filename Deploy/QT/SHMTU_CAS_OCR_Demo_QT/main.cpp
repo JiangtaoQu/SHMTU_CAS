@@ -3,13 +3,8 @@
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
-#include <iostream>
 
-// #ifndef _DEBUG
-// #ifdef DEBUG_MODE
-// #define _DEBUG
-// #endif
-// #endif
+#include "cross_platform_macro.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
@@ -23,13 +18,6 @@ int main(int argc, char *argv[]) {
             break;
         }
     }
-
-#ifndef NDEBUG
-    std::cout << "Hello, World! Debug Mode" << std::endl;
-#else
-    std::cout << "Hello, World! Release Mode" << std::endl;
-#endif
-
 
     MainWindow w;
     w.show();

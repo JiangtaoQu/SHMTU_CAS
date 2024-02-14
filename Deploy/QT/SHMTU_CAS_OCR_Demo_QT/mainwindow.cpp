@@ -6,6 +6,8 @@
 #include "QMessageBox"
 #include "QFileDialog"
 
+#include "cross_platform_macro.h"
+
 #include "QtUIHelper.h"
 
 #include "CAS_OCR_QT.h"
@@ -42,7 +44,6 @@ void MainWindow::on_pushButton_DownloadUrl_clicked() {
 }
 
 void MainWindow::on_pushButton_ocr_clicked() {
-
     if (_innerBitmap.isNull()) {
         ui->statusbar->showMessage("错误：请先下载或打开图片!");
         QMessageBox msgBox;
