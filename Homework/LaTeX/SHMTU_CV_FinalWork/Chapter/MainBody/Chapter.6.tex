@@ -132,18 +132,173 @@ TF32 的工作原理是在内部使用 19 位尾数（mantissa）和 10 位指�
 
 \section{ONNX量化步骤}
 
-\subsection{FP16}
+\subsection{半精度FP16量化}
 
-\subsection{INT8}
+具体文件请参考\url{Train/SHMTU_CAS_OCR_RESNET/src/classify/digit/quantize_onnx_fp16.py}。
+
+\begin{lstlisting}[caption={ONNX FP16量化},language=Python,label=code:onnx_fp16]
+	import warnings
+
+	import onnx
+	from onnxconverter_common import float16
+
+	model = onnx.load("resnet34_digit_latest.onnx")
+
+	with warnings.catch_warnings():
+	warnings.filterwarnings(
+	"ignore", category=UserWarning,
+	message="the float32 number .* will be truncated to .*"
+	)
+	model_fp16 = float16.convert_float_to_float16(model)
+
+	onnx.save(model_fp16, "resnet34_digit_latest_fp16.onnx")
+
+\end{lstlisting}
+
+该Python代码片段(\ref{code:onnx_fp16})执行了以下步骤：
+
+\begin{enumerate}
+	\item {
+		导入必要的库和模块：
+
+		\begin{itemize}
+			\item \texttt{warnings}：用于处理警告信息。
+			\item \texttt{onnx}：用于加载和保存ONNX模型。
+			\item \texttt{onnxconverter\_common.float16}：提供了将ONNX模型从float32转换为float16的功能。
+		\end{itemize}
+	}
+
+	\item {加载模型
+
+		加载预训练的ONNX模型（"resnet34\_digit\_latest.onnx"）到变量\texttt{model}。
+	}
+
+	\item {
+		使用\texttt{warnings.catch\_warnings()}上下文管理器来忽略特定类型的警告信息。
+
+		通过\texttt{warnings.filterwarnings()}函数，忽略了与float32到float16转换相关的用户警告。
+	}
+
+	\item {
+		模型量化
+
+		调用\texttt{float16.convert\_float\_to\_float16()}函数将\texttt{model}从float32格式转换为float16格式，并将转换后的模型存储在变量\texttt{model\_fp16}中。
+	}
+
+	\item {
+		使用\texttt{onnx.save()}函数保存
+	}
+
+\end{enumerate}
+
+此代码的目的是减小模型文件的大小并可能提高推理速度，但可能会以牺牲一些模型精度为代价。
+
+\subsection{INT8动态量化}
+
+具体文件请参考\url{Train/SHMTU_CAS_OCR_RESNET/src/classify/digit/quantize_onnx_int8.py}。
+
+\begin{lstlisting}[caption={ONNX INT8量化},language=Python,label=code:onnx_int8]
+	import onnx
+	from onnxruntime.quantization import preprocess
+	from onnxruntime.quantization import quantize_dynamic, QuantType
+
+	from pathlib import Path
+
+	model_fp32 = "resnet34_digit_latest_p.onnx"
+	model_quant = "resnet34_digit_latest_int8.onnx"
+
+	model_fp32 = Path(model_fp32)
+	model_quant = Path(model_quant)
+
+	# python -m onnxruntime.quantization.preprocess --input resnet34_digit_latest.onnx --output resnet34_digit_latest_p.onnx
+
+	quantize_dynamic(
+	model_fp32,
+	model_quant,
+	weight_type=QuantType.QUInt8,
+	)
+
+\end{lstlisting}
+
+该Python代码片段(\ref{code:onnx_int8})执行了以下步骤：
+
+\begin{enumerate}
+	\item 导入必要的库：
+	\begin{enumerate}
+		\item \texttt{onnx}: 用于加载和保存ONNX模型。
+		\item \texttt{onnxruntime.quantization.preprocess}: 用于预处理模型，准备进行量化。
+		\item \texttt{onnxruntime.quantization.quantize\_dynamic} 和 \texttt{QuantType}: 用于执行动态量化。
+		\item \texttt{pathlib.Path}: 用于处理文件路径。
+	\end{enumerate}
+	\item 定义输入和输出模型的路径：
+	\begin{enumerate}
+		\item \texttt{model\_fp32}: 指向原始的32位浮点数模型文件。
+		\item \texttt{model\_quant}: 指向将要保存的量化后的8位整数模型文件。
+	\end{enumerate}
+	\item 使用 \texttt{Path} 类将字符串路径转换为 \texttt{Path} 对象，以便进行更方便的路径操作。
+	\item 注释行（以`\#`开头）指示了如何使用命令行工具对模型进行FP16量化处理，这是官方文档中推荐的做法，首先进行FP16量化后再进行INT8量化。
+	\item 调用 \texttt{quantize\_dynamic} 函数对模型进行动态量化：
+	\begin{enumerate}
+		\item 输入模型：\texttt{model\_fp32}
+		\item 输出模型：\texttt{model\_quant}
+		\item 权重类型：\texttt{QuantType.QUInt8}，表示使用无符号8位整数进行量化。
+	\end{enumerate}
+\end{enumerate}
+
+量化后的模型可用于减少模型大小和提高推理速度，同时保持模型的准确性。这对于在资源受限的设备上部署模型特别有用。
+
+这里使用的是动态INT8的方法进行模型的量化，下面在NCNN中将介绍静态量化的方法。
 
 \section{NCNN量化步骤}
 
-\subsection{FP16}
+我们使用官方提供的转换工具进行操作。
 
-\subsection{INT8}
+由于ONNX使用Google Protobuf进行序列化，然而Linux操作系统中的Protobuf或通过包管理器(如APT)安装的Protobuf有很大概率与官方Github Release提供的预编译版本所需的Protobuf版本不同，因此我们选择兼容性极好的Windows来执行NCNN的量化操作。
+
+\subsection{半精度FP16量化}
+
+NCNN FP16量化脚本(\ref{code:ncnn_fp16})请参考\url{Train/SHMTU_CAS_OCR_RESNET/convert_onnx_to_ncnn.ps1}。
+
+\begin{lstlisting}[caption={NCNN FP16量化},label=code:ncnn_fp16]
+	# Convert ONNX model to NCNN format
+	# Usage: powershell -File convert_onnx_to_ncnn.ps1
+
+	function ConvertModelToNCNN {
+		param (
+		[string]$modelName
+		)
+
+		$toolPath = ".\3rdparty\ncnn\bin"
+		$pthDirPath = ".\workdir\Models"
+
+		Write-Host "Converting $modelName to NCNN format"
+
+		& "$toolPath\onnx2ncnn.exe" `
+		"$pthDirPath\$modelName.onnx" `
+		"$pthDirPath\$modelName.fp32.param" `
+		"$pthDirPath\$modelName.fp32.bin"
+
+		# Optimize quantization, 1: fp16, 0: fp32
+		& "$toolPath\ncnnoptimize.exe" `
+		"$pthDirPath\$modelName.fp32.param" `
+		"$pthDirPath\$modelName.fp32.bin" `
+		"$pthDirPath\$modelName.fp16.param" `
+		"$pthDirPath\$modelName.fp16.bin" `
+		1
+	}
+
+	ConvertModelToNCNN -modelName "resnet18_equal_symbol_latest"
+	ConvertModelToNCNN -modelName "resnet18_operator_latest"
+	ConvertModelToNCNN -modelName "resnet34_digit_latest"
+
+\end{lstlisting}
+
+\subsection{INT8静态量化}
 
 \section{实验}
 
 \subsection{FP16}
 
 \subsection{INT8}
+
+经过试验，INT8量化阿拉伯数字识别模型后无法正确识别数字3，因此不适合使用INT8量化。

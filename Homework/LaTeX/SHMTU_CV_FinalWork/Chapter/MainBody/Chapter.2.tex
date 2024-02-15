@@ -1,13 +1,77 @@
 \chapter{问题分析}
 \label{chapter:2}
 
+\section{验证码爬虫}
+
+上海海事大学统一认证平台，界面见图\ref{fig:caswebpage}。该平台的接口URL为\url{https://cas.shmtu.edu.cn/cas/login}，然而其验证码的URL为\url{https://cas.shmtu.edu.cn/cas/captcha}，每次访问这个网址都可以获取到一个400x140x3的彩色PNG图片，因此我们只需要使用Python的Requests库进行爬虫即可，间隔3秒下载1次，保存为当前时间命名的文件中。
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{Resources/Picture/cas_webpage}
+	\caption{上海海事大学统一认证平台}
+	\label{fig:caswebpage}
+\end{figure}
+
 \section{验证码图片分析}
+
+验证码图片示例见图\ref{fig:test120240102160004server}和图\ref{fig:test220240102160811server}。
+
+验证码图片分为4部分：
+
+\begin{enumerate}
+	\item 数字1
+	\item 运算符号
+	\item 数字2
+	\item 等于号
+\end{enumerate}
+
+其中，第1部分与第3部分的数字均能保证为阿拉伯数字，然而第2部分和第4部分均有可能为汉字或符号，而且验证码的每一部分经常连接在一起，因此不方便进行整体OCR。
 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.7\linewidth]{Resources/Picture/test1_20240102160004_server}
-	\caption{验证码示例}
+	\caption{验证码图片-示例1}
 	\label{fig:test120240102160004server}
 \end{figure}
 
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{Resources/Picture/test2_20240102160811_server}
+	\caption{验证码图片-示例2}
+	\label{fig:test220240102160811server}
+\end{figure}
+
 \section{解决方案}
+
+\subsection{Paddle OCR}
+
+Paddle OCR是一个基于百度Paddle Paddle深度学习框架的开源OCR工具库，旨在提供高效、易用且灵活的OCR解决方案。它包含了多种功能和模型，可以用于文字检测、文字识别、文本方向检测、多语言OCR等任务。
+
+项目地址：\url{https://github.com/PaddlePaddle/PaddleOCR}
+
+以下是Paddle OCR的主要特点和功能：
+
+\begin{enumerate}
+	\item 丰富的模型支持：Paddle OCR提供了多个预训练的模型，涵盖了文字检测、文本识别等多个任务。这些模型具有不同的轻量级和高精度的特点，可以根据具体需求进行选择。
+	\item 多任务支持：Paddle OCR支持多种OCR任务，包括文本检测、文本识别、文本方向检测等。用户可以根据需求选择不同的任务模型，并将它们组合在一起构建完整的OCR系统。
+	\item 易用性：Paddle OCR提供了简单易用的Python接口，用户可以通过几行代码就能实现文字检测和识别的功能。同时，它还提供了丰富的文档和示例代码，帮助用户快速上手。
+	\item 高性能：Paddle OCR基于Paddle Paddle深度学习框架，利用其高性能的计算能力和优化的算法，能够在各种硬件平台上实现高效的文字检测和识别。
+	\item 灵活性：Paddle OCR提供了灵活的模型配置和训练接口，用户可以根据自己的需求进行模型的定制和优化。同时，它还支持多种数据格式和输入方式，适应不同场景和需求。
+\end{enumerate}
+
+总的来说，Paddle OCR是一个功能丰富、易用高效的OCR工具库，适用于各种文字检测和识别任务，可以帮助用户快速构建和部署OCR系统。
+
+我尝试使用Paddle OCR进行识别，然而识别结果总是不尽如人意，因为他每一部分连接在一起，因此很容易将多部分认为是一个字符，而且很容易将减号识别为中文数字“一”，因此无法使用Paddle OCR进行处理。
+
+\subsection{分片段识别}
+
+为了更精确地识别数学表达式中的各个部分，我首先进行了大规模的图片爬取，累计获取了5万张相关的图像数据。接着，我对这些图片执行了以下操作：
+
+\begin{enumerate}
+	\item 分类处理：我根据图片中“等于”和“=”这两个符号的出现情况，对图像进行了分类。这样做的目的是为了区分包含等号和包含“等于”二字，为后续的处理提供便利。
+	\item 等号去除：对于包含等号的图像，我进一步根据比例关系去除了等号部分，只保留了纯计算式的区域。这一步骤的目的是为了提取出不含等号的数学表达式，便于后续的识别工作。
+	\item 尺寸调整与分割：考虑到不同数学表达式在图像中可能呈现出不同的尺寸，我采取了按比例分割的方法。通过对图像中数学表达式的尺寸进行分析，我将其分割成适合识别的片段。
+\end{enumerate}
+
+通过上述步骤，我成功地实现了对计算式的有效分割。
+实验结果表明，这种分段识别的方法能够显著提高识别的准确率。因此，我决定将分割后的四个部分分别进行独立的识别处理，以进一步提升整体识别效果。

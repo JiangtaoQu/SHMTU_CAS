@@ -751,7 +751,7 @@ TSWLatexianTemp*
 #*Notes.bib
 
 # Qt
-
+Deploy/QT/SHMTU_CAS_OCR_Demo_QT/CMakeLists.txt.user
 Deploy/QT/SHMTU_CAS_OCR_Demo_QT/.idea/
 Deploy/QT/SHMTU_CAS_OCR_Demo_QT/cmake-build-*/
 Deploy/QT/SHMTU_CAS_OCR_Demo_QT/Checkpoint/

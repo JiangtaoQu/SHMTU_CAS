@@ -1,50 +1,36 @@
-\newpage
-\chapter{Android平台的部署及C++混合编译的探究}
-\label{chapter:9}
+\chapter{Microsoft Windows .Net 平台的部署及混合编译的探究}
+\label{chapter:9dotnet}
 
-\section{程序介绍}
 
-上海海事大学验证码识别Demo 是基于前面第\ref{chapter:7}章的VC++代码中的CAS\_OCR.cpp直接移植到Android，然后使用JNI混合编译使用Java调用C++代码。
 
-\section{环境介绍}
-
-Kotlin版本为 1.9.2
-为了与Kotlin进行兼容，因此JRE使用Java 1.8
-
-\section{接口设计}
-
-程序核心部分依旧使用OpenCV与NCNN，除此之外还是用JNI相关函数将Android Bitmap转换成OpenCV的cv::Mat，然后进一步进行处理，最后C++输出的std::tuple转换成Java的Object[]。
-
-\section{使用说明}
+\section{工作流程}
 
 \begin{enumerate}
-	\item 启动程序：点击Luncher上的“上海海事大学验证码识别Demo”，见图\ref{fig:androiddesktop}，进入主界面，见图\ref{fig:activitymain}。
-	\item 打开图片：“从网络获取验证码”或“本地相册选图”或使用内置图片1和2
-	\item 执行OCR：您可以选择使用“CPU识别”或“GPU识别”
+	\item .Net WPF显示界面
+	\item C\#下载图片或从本地加载图片
+	\item C\#程序通过CLR Connector这个C\#的中间层与CLR进行连接
+	\item CLR C++为C\#提供接口
+	\item CAS\_OCR.cpp相关逻辑
 \end{enumerate}
+
+\section{CLR程序设计}
+
+
+
+\section{CLR Connector程序设计}
 
 \section{运行截图}
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.6\linewidth]{Resources/Picture/android_desktop}
-	\caption{Android APP 桌面图标}
-	\label{fig:androiddesktop}
+	\includegraphics[width=0.7\linewidth]{Resources/Picture/wpf_main}
+	\caption{WPF 主界面}
+	\label{fig:wpfmain}
 \end{figure}
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.6\linewidth]{Resources/Picture/activity_main}
-	\caption{Android APP 主界面}
-	\label{fig:activitymain}
+	\includegraphics[width=0.7\linewidth]{Resources/Picture/wpf_memory}
+	\caption{WPF程序内存占用(加载模型后)}
+	\label{fig:wpfmemory}
 \end{figure}
-
-
-\begin{figure}
-	\centering
-	\includegraphics[width=0.6\linewidth]{Resources/Picture/app_info}
-	\caption{Android APP 信息}
-	\label{fig:appinfo}
-\end{figure}
-
-
