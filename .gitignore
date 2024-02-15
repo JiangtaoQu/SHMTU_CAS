@@ -749,12 +749,23 @@ TSWLatexianTemp*
 # option is specified. Footnotes are the stored in a file with suffix Notes.bib.
 # Uncomment the next line to have this generated file ignored.
 #*Notes.bib
+
+# Qt
+
 Deploy/QT/SHMTU_CAS_OCR_Demo_QT/.idea/
 Deploy/QT/SHMTU_CAS_OCR_Demo_QT/cmake-build-*/
-Deploy/QT/build-SHMTU_CAS_OCR_Demo_QT-Desktop_Qt_5_15_2_clang_64bit-Debug
+Deploy/QT/SHMTU_CAS_OCR_Demo_QT/Checkpoint/
+
+Deploy/QT/build-SHMTU_CAS_OCR_Demo_QT-Desktop_Qt_*/
+
+# Python
 Train/SHMTU_CAS_OCR_RESNET/workdir
 Train/SHMTU_CAS_OCR_RESNET/.idea
 Train/SHMTU_CAS_OCR_RESNET/.ipynb_checkpoints
+
+# LaTeX
 Homework/LaTeX/SHMTU_CV_FinalWork/khm_shmtu_cv_finalwork_202401.pdf
+
+# Android
 Deploy/SHMTU_CAS_OCR_Demo_Android/shmtu_ocr/src/main/cpp/3rdparty/
 

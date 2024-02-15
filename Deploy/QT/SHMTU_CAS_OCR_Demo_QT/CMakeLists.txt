@@ -6,23 +6,23 @@ if (WIN32)
     set(CMAKE_PREFIX_PATH "D:/Dev/Qt/6.6.2/msvc2019_64")
 elseif (APPLE)
     set(CMAKE_PREFIX_PATH "/Users/konghaomin/Dev/Qt/Qt/6.6.2/macos")
-elseif(LINUX)
+elseif (LINUX)
     set(CMAKE_PREFIX_PATH "/home/konghaomin/Dev/Qt/Qt/6.6.2/gcc_64")
 endif ()
 
 message(STATUS "CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
 
 # 设置默认的构建类型为Debug，如果不指定构建类型的话
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     message(STATUS "Setting build type to 'Debug' as none was specified.")
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)
-endif()
+endif ()
 
 # 检查构建类型是否为Debug
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Configuring Debug Mode")
     add_definitions(-DDEBUG_MODE)
-endif()
+endif ()
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -172,4 +172,44 @@ install(TARGETS SHMTU_CAS_OCR_Demo_QT
 
 if (QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(SHMTU_CAS_OCR_Demo_QT)
+endif ()
+
+
+set(
+        CHECKPOINT_DIR
+        Checkpoint
+)
+
+# Package Checkpoint Files into BUNDLE On macOS
+if (APPLE AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${CHECKPOINT_DIR}")
+    message(STATUS "Found Checkpoint Files on Target Apple macOS.")
+    message(STATUS "Checkpoint Files will be packaged into the app bundle.")
+
+    set(
+            TARGET_CHECKPOINT
+            ../Resources
+    )
+
+    set(
+            CHECKPOINT_FILES
+            ${CHECKPOINT_DIR}/resnet18_equal_symbol_latest.fp16.bin
+            ${CHECKPOINT_DIR}/resnet18_equal_symbol_latest.fp16.param
+            ${CHECKPOINT_DIR}/resnet18_operator_latest.fp16.bin
+            ${CHECKPOINT_DIR}/resnet18_operator_latest.fp16.param
+            ${CHECKPOINT_DIR}/resnet34_digit_latest.fp16.bin
+            ${CHECKPOINT_DIR}/resnet34_digit_latest.fp16.param
+    )
+
+    foreach (CHECKPOINT_FILE ${CHECKPOINT_FILES})
+        add_custom_command(
+                TARGET SHMTU_CAS_OCR_Demo_QT POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_CURRENT_SOURCE_DIR}/${CHECKPOINT_FILE}
+                $<TARGET_FILE_DIR:SHMTU_CAS_OCR_Demo_QT>/${TARGET_CHECKPOINT}/${CHECKPOINT_FILE}
+        )
+    endforeach ()
+
+    add_definitions(
+            -DNCNN_APPLE_CHECKPOINT="${TARGET_CHECKPOINT}/${CHECKPOINT_DIR}"
+    )
 endif ()

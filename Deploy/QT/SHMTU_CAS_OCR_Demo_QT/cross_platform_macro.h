@@ -8,7 +8,9 @@
 #ifndef _WINDOWS
 // Not Windows
 
+#ifndef __APPLE__
 #include <features.h>
+#endif
 
 #ifndef _DEBUG
 #ifndef NDEBUG

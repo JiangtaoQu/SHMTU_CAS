@@ -70,14 +70,21 @@ void MainWindow::on_pushButton_ocr_clicked() {
     std_extend::string_trim(checkpoint_path);
 
     if (checkpoint_path.empty()) {
+#if defined(__APPLE__) && defined(NCNN_APPLE_CHECKPOINT)
+        checkpoint_path = NCNN_APPLE_CHECKPOINT;
+#endif
+    }
+
+    if (checkpoint_path.empty()) {
 #ifdef _DEBUG
+        // Debug Mode
 
 #if defined(_WINDOWS)
         checkpoint_path =
                 R"(H:\SHMTU\shmtu-cas\Deploy\SHMTU_CAS_OCR_Demo_Windows\checkpoint)";
 #elif defined(__APPLE__)
         checkpoint_path =
-                    "/Users/konghaomin/SHMTU/shmtu-cas/Deploy/SHMTU_CAS_OCR_Demo_Android/shmtu_ocr/src/main/assets";
+                "/Users/konghaomin/SHMTU/shmtu-cas/Deploy/SHMTU_CAS_OCR_Demo_Android/shmtu_ocr/src/main/assets";
 #if defined(TARGET_IPHONE_SIMULATOR)
         // iOS Simulator
 #elif defined(TARGET_OS_IPHONE)
@@ -93,6 +100,9 @@ void MainWindow::on_pushButton_ocr_clicked() {
         checkpoint_path =
                 "/media/konghaomin/PM963/SHMTU/shmtu-cas/Deploy/SHMTU_CAS_OCR_Demo_Android/shmtu_ocr/src/main/assets";
 #endif
+
+#else
+        // Release Mode
 
 #endif
     }
