@@ -3,12 +3,14 @@ cmake_minimum_required(VERSION 3.5)
 project(SHMTU_CAS_OCR_Demo_QT VERSION 0.1 LANGUAGES CXX)
 
 if (WIN32)
-    set(CMAKE_PREFIX_PATH "D:/Dev/Qt/6.6.1/msvc2019_64")
+    set(CMAKE_PREFIX_PATH "D:/Dev/Qt/6.6.2/msvc2019_64")
 elseif (APPLE)
-    set(CMAKE_PREFIX_PATH "/Users/konghaomin/Dev/Qt/Qt/6.6.1/macos")
+    set(CMAKE_PREFIX_PATH "/Users/konghaomin/Dev/Qt/Qt/6.6.2/macos")
 elseif(LINUX)
-    set(CMAKE_PREFIX_PATH "/home/konghaomin/Dev/Qt/Qt/6.6.1/gcc_64")
+    set(CMAKE_PREFIX_PATH "/home/konghaomin/Dev/Qt/Qt/6.6.2/gcc_64")
 endif ()
+
+message(STATUS "CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
 
 # 设置默认的构建类型为Debug，如果不指定构建类型的话
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)

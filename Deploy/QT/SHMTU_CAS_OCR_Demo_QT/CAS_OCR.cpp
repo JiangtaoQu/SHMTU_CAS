@@ -29,6 +29,46 @@
 #include <gpu.h>
 #endif // NCNN_SUPPORT_VULKAN
 
+// 分割图像
+// Python Version:src/utils/pic/spilt_img.py
+static auto split_img_by_ratio(
+	const cv::Mat& image,
+	float start_ratio = 0.7f,
+	float end_ratio = 1.0f
+) -> cv::Mat
+{
+	// 获取图像的宽度和高度
+	const int height = image.rows;
+	const int width = image.cols;
+
+	// 计算水平方向上的裁剪范围
+	if (start_ratio > end_ratio)
+	{
+		std::swap(start_ratio, end_ratio);
+	}
+
+	const int horizontal_start = static_cast<int>(
+		static_cast<float>(width) * start_ratio
+	);
+	int horizontal_end = static_cast<int>(
+		static_cast<float>(width) * end_ratio
+	);
+	if (end_ratio >= 1)
+	{
+		horizontal_end = width;
+	}
+
+	cv::Mat horizontal_part = image(
+		cv::Rect(
+			horizontal_start, 0,
+			horizontal_end - horizontal_start,
+			height
+		)
+	).clone();
+
+	return horizontal_part;
+}
+
 namespace CAS_OCR
 {
 	bool is_init = false;
@@ -52,46 +92,6 @@ namespace CAS_OCR
 	constexpr float key_point_symbol[3] = {0.25f, 0.58f, 0.75f};
 	constexpr float key_point_chs[3] = {0.15f, 0.33f, 0.46f};
 	constexpr int config_thresh = 200;
-
-	// 分割图像
-	// Python Version:src/utils/pic/spilt_img.py
-	static cv::Mat split_img_by_ratio(
-		const cv::Mat& image,
-		float start_ratio = 0.7f,
-		float end_ratio = 1.0f
-	)
-	{
-		// 获取图像的宽度和高度
-		const int height = image.rows;
-		const int width = image.cols;
-
-		// 计算水平方向上的裁剪范围
-		if (start_ratio > end_ratio)
-		{
-			std::swap(start_ratio, end_ratio);
-		}
-
-		const int horizontal_start = static_cast<int>(
-			static_cast<float>(width) * start_ratio
-		);
-		int horizontal_end = static_cast<int>(
-			static_cast<float>(width) * end_ratio
-		);
-		if (end_ratio >= 1)
-		{
-			horizontal_end = width;
-		}
-
-		cv::Mat horizontal_part = image(
-			cv::Rect(
-				horizontal_start, 0,
-				horizontal_end - horizontal_start,
-				height
-			)
-		).clone();
-
-		return horizontal_part;
-	}
 
 	bool path_check_windows_style(const std::string& dir_path)
 	{
@@ -370,7 +370,7 @@ namespace CAS_OCR
 		// printf("predicted_equal_symbol:%d\n", predicted_equal_symbol);
 
 		const float* key_point;
-		if (predicted_equal_symbol == CAS_EQUAL_SYMBOL_CHS)
+		if (predicted_equal_symbol == CAS_EXPR_EQUAL_SYMBOL_CHS)
 		{
 			// CHS
 			key_point = key_point_chs;
@@ -499,7 +499,7 @@ namespace CAS_OCR
 
 	void set_model_gpu_support(bool use_gpu)
 	{
-		if(is_init)
+		if (is_init)
 		{
 			return;
 		}

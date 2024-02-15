@@ -14,9 +14,14 @@ QPixmap DownloadQPixmapFromUrl(const std::string &url) {
             )
         )
     );
-    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    QObject::connect(
+        reply,
+        &QNetworkReply::finished,
+        &loop,
+        &QEventLoop::quit
+    );
     loop.exec();
-    QByteArray data = reply->readAll();
+    const QByteArray data = reply->readAll();
     QPixmap pixmap;
     pixmap.loadFromData(data);
     return pixmap;

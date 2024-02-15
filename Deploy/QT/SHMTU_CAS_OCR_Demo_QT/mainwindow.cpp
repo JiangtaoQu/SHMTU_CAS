@@ -56,9 +56,14 @@ void MainWindow::on_pushButton_ocr_clicked() {
         return;
     }
 
-    const auto use_gpu = ui->checkBox_UseGpu->isChecked();
-
-    CAS_OCR::set_model_gpu_support(use_gpu);
+    if (!CAS_OCR::is_model_init()) {
+        // 模型加载后就没必要再设置工作设备了，毕竟模型已经加载了移动不了了！
+        const auto use_gpu = ui->checkBox_UseGpu->isChecked();
+        if (use_gpu) {
+            CAS_OCR::get_gpu_info().print_info();
+        }
+        CAS_OCR::set_model_gpu_support(use_gpu);
+    }
 
     auto checkpoint_path =
             ui->lineEdit_CheckpointPath->text().toStdString();
@@ -113,10 +118,10 @@ void MainWindow::on_pushButton_ocr_clicked() {
 
     ui->statusbar->showMessage("模型加载完毕!正在识别...");
 
-    auto result =
+    const auto result =
             CAS_OCR::predict_validate_code(_innerBitmap);
 
-    auto expr = std::get<1>(result);
+    const auto expr = std::get<1>(result);
 
     ui->label_Result->setText(QString::fromStdString(expr));
     ui->statusbar->showMessage("OCR识别完毕!");
@@ -155,7 +160,7 @@ void MainWindow::on_pushButton_OpenLocal_clicked() {
         qDebug() << "Selected file:" << selectedFile;
 
         // 加载图片
-        QPixmap pixmap(selectedFile);
+        const QPixmap pixmap(selectedFile);
 
         if (pixmap.isNull()) {
             std::cerr << "Pixmap is null!" << std::endl;
@@ -201,6 +206,7 @@ void MainWindow::on_actionReleaseModel_triggered() {
 }
 
 void MainWindow::on_actionExit_triggered() {
+    close();
 }
 
 void MainWindow::on_actionDownload_From_URL_triggered() {
@@ -216,7 +222,19 @@ void MainWindow::on_actionDoOCR_triggered() {
     on_pushButton_ocr_clicked();
 }
 
-
 void MainWindow::on_actionAbout_triggered() {
-    close();
+    QMessageBox msgBox;
+    msgBox.setText(
+        "上海海事大学统一认证平台验证码OCR识别Demo\n"
+        "Author:Haomin Kong\n"
+        "这是孔昊旻同学的一个课程设计。\n"
+        "本程序支持Windows/macOS/Linux\n"
+        "请勿用于非法用途，以及商业用途！！！\n"
+        "Qt version:" + QString::fromStdString(qVersion())
+    );
+    msgBox.setWindowTitle("About");
+    msgBox.setIcon(QMessageBox::Information);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+
+    msgBox.exec();
 }

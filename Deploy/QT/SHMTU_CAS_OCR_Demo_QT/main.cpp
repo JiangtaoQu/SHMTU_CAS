@@ -9,6 +9,8 @@
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
+    qDebug() << "Current Qt version:" << qVersion();
+
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
     for (const QString &locale: uiLanguages) {

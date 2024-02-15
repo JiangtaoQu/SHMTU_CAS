@@ -7,7 +7,7 @@
 namespace QtOpenCV {
     // 将 cv::Mat 转换为 QPixmap
     QPixmap CvMatToQPixmap(const cv::Mat &mat) {
-        QImage image(
+        const QImage image(
             mat.data,
             mat.cols, mat.rows,
             static_cast<int>(mat.step),

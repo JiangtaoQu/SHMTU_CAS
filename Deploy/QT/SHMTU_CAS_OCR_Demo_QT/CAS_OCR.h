@@ -15,19 +15,23 @@ namespace CAS_OCR
         CAS_EXPR_Operator_Mul_CHS = 5
     };
 
-    enum CAS_EQUAL_SYMBOL
+    enum CAS_EXPR_EQUAL_SYMBOL
     {
-        CAS_EQUAL_SYMBOL_CHS = 0,
-        CAS_EQUAL_SYMBOL_SYMBOL = 1
+        CAS_EXPR_EQUAL_SYMBOL_CHS = 0,
+        CAS_EXPR_EQUAL_SYMBOL_SYMBOL = 1
     };
 
+#ifndef __ANDROID__
     bool init_model(const std::string& dir_path = "", std::string type_name = "fp32");
+#endif
 
     std::tuple<int, std::string, int, int, int, int>
-    predict_validate_code(const cv::Mat& image_input, bool use_gpu=true);
+    predict_validate_code(const cv::Mat& image_input, bool use_gpu = true);
 
+#ifndef __ANDROID__
     std::tuple<int, std::string, int, int, int, int>
-    predict_validate_code(const std::string& image_path, bool use_gpu=true);
+    predict_validate_code(const std::string& image_path, bool use_gpu = true);
+#endif
 
     void release_model();
 
@@ -51,11 +55,11 @@ namespace CAS_OCR
         NCNN_Device_Info() = default;
 
         NCNN_Device_Info(
-                int device_index,
-                std::string device_name,
-                uint32_t api_version,
-                uint32_t device_memory,
-                VULKAN_DEVICE_TYPE device_type
+            int device_index,
+            std::string device_name,
+            uint32_t api_version,
+            uint32_t device_memory,
+            VULKAN_DEVICE_TYPE device_type
         );
 
         void print_info() const;
@@ -69,9 +73,11 @@ namespace CAS_OCR
 
     int get_gpu_count();
 
+    bool is_support_vulkan();
+
     int get_default_gpu_index();
 
-    NCNN_Device_Info get_gpu_info(int gpu_index=get_default_gpu_index());
+    NCNN_Device_Info get_gpu_info(int gpu_index = get_default_gpu_index());
 
     std::vector<NCNN_Device_Info> get_all_gpu_info();
 

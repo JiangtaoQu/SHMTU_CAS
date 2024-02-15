@@ -13,7 +13,7 @@ namespace std_extend {
             str.begin(),
             std::ranges::find_if(
                 str,
-                [](unsigned char ch) {
+                [](const unsigned char ch) {
                     return !std::isspace(ch);
                 }
             )
@@ -23,7 +23,7 @@ namespace std_extend {
         str.erase(
             std::find_if(
                 str.rbegin(), str.rend(),
-                [](unsigned char ch) {
+                [](const unsigned char ch) {
                     return !std::isspace(ch);
                 }
             ).base(),
