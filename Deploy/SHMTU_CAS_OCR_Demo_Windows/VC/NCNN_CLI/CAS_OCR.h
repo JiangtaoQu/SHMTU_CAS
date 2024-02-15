@@ -22,7 +22,7 @@ namespace CAS_OCR
 	};
 
 #ifndef __ANDROID__
-	bool init_model(const std::string& dir_path = "", std::string type_name = "fp32");
+	bool init_model(std::string dir_path = "", std::string type_name = "fp32");
 #endif
 
 	std::tuple<int, std::string, int, int, int, int>

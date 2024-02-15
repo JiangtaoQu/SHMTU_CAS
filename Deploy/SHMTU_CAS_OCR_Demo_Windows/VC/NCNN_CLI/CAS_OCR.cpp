@@ -129,20 +129,10 @@ namespace CAS_OCR
 		const std::string& name
 	)
 	{
-		if (dir_path.empty())
-		{
-			const auto dir_path_default = "../../checkpoint/";
-			dir_path = dir_path_default;
-		}
-
 		path_ensure_slash(dir_path);
 
-		const std::string device_type_str =
-			global_use_gpu ? "GPU" : "CPU";
-
 		printf(
-			"Loading model to %s:%s\n",
-			device_type_str.c_str(),
+			"Loading model:%s\n",
 			name.c_str()
 		);
 
@@ -164,11 +154,17 @@ namespace CAS_OCR
 
 
 	// 加载模型
-	bool init_model(const std::string& dir_path, std::string type_name)
+	bool init_model(std::string dir_path, std::string type_name)
 	{
 		if (is_init)
 		{
 			return true;
+		}
+
+		if (dir_path.empty())
+		{
+			const auto dir_path_default = "../../checkpoint/";
+			dir_path = dir_path_default;
 		}
 
 #ifdef _DEBUG
@@ -190,6 +186,17 @@ namespace CAS_OCR
 		{
 			type_name = "fp32";
 		}
+
+		const std::string device_type_str =
+			global_use_gpu ? "GPU" : "CPU";
+
+		const auto device_info =
+			get_gpu_info(get_default_gpu_index());
+
+		printf("Checkpoint Directory:%s\n", dir_path.c_str());
+		printf("Target Device:%s\n", device_type_str.c_str());
+		printf("\tDevice Name:%s\n", device_info.device_name.c_str());
+		printf("\tDevice Memory:%d MB\n", device_info.device_memory);
 
 		bool isSuccess = true;
 

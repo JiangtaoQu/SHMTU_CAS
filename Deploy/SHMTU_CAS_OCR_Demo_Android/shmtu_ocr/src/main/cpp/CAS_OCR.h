@@ -15,14 +15,14 @@ namespace CAS_OCR
         CAS_EXPR_Operator_Mul_CHS = 5
     };
 
-    enum CAS_EQUAL_SYMBOL
+    enum CAS_EXPR_EQUAL_SYMBOL
     {
-        CAS_EQUAL_SYMBOL_CHS = 0,
-        CAS_EQUAL_SYMBOL_SYMBOL = 1
+        CAS_EXPR_EQUAL_SYMBOL_CHS = 0,
+        CAS_EXPR_EQUAL_SYMBOL_SYMBOL = 1
     };
 
 #ifndef __ANDROID__
-    bool init_model(const std::string& dir_path = "", std::string type_name = "fp32");
+    bool init_model(std::string dir_path = "", std::string type_name = "fp32");
 #endif
 
     std::tuple<int, std::string, int, int, int, int>
