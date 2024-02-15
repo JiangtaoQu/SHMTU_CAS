@@ -2,6 +2,7 @@
 #include "./ui_mainwindow.h"
 
 #include <iostream>
+#include <filesystem>
 
 #include "QMessageBox"
 #include "QFileDialog"
@@ -71,7 +72,11 @@ void MainWindow::on_pushButton_ocr_clicked() {
 
     if (checkpoint_path.empty()) {
 #if defined(__APPLE__) && defined(NCNN_APPLE_CHECKPOINT)
-        checkpoint_path = NCNN_APPLE_CHECKPOINT;
+        const auto applicationDirPath =
+                QCoreApplication::applicationDirPath();
+        const auto applicationDirPathStr =
+                applicationDirPath.toStdString();
+        checkpoint_path = applicationDirPathStr + "/" + NCNN_APPLE_CHECKPOINT;
 #endif
     }
 
@@ -233,6 +238,18 @@ void MainWindow::on_actionDoOCR_triggered() {
 }
 
 void MainWindow::on_actionAbout_triggered() {
+    const auto qtVersion =
+            QString::fromStdString(qVersion());
+    const auto applicationDirPath =
+            QCoreApplication::applicationDirPath();
+
+    const auto currentDir =
+            std::filesystem::current_path();
+    const auto currentDirStr =
+            currentDir.string();
+    const auto currentDirQStr =
+            QString::fromStdString(currentDirStr);
+
     QMessageBox msgBox;
     msgBox.setText(
         "上海海事大学统一认证平台验证码OCR识别Demo\n"
@@ -240,7 +257,9 @@ void MainWindow::on_actionAbout_triggered() {
         "这是孔昊旻同学的一个课程设计。\n"
         "本程序支持Windows/macOS/Linux\n"
         "请勿用于非法用途，以及商业用途！！！\n"
-        "Qt version:" + QString::fromStdString(qVersion())
+        "Qt version:" + qtVersion + "\n"
+        "Application Dir Path:" + applicationDirPath + "\n"
+        "Current Path:" + currentDirQStr + "\n"
     );
     msgBox.setWindowTitle("About");
     msgBox.setIcon(QMessageBox::Information);
