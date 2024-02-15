@@ -35,7 +35,9 @@ namespace SHMTU_CAS_OCR_Demo_WPF
                 return;
             }
 
-            CAS_OCR.set_model_gpu_support(true);
+            var useGpu =
+                CheckBoxGpu.IsChecked.GetValueOrDefault(false);
+            CAS_OCR.set_model_gpu_support(useGpu);
 
             CAS_OCR.init_model(GetCheckpointSaveDirPath(""), "fp16");
 
@@ -48,7 +50,7 @@ namespace SHMTU_CAS_OCR_Demo_WPF
                 resultExprStr, "Result",
                 MessageBoxButton.OK, MessageBoxImage.Information
             );
-            
+
             // CAS_OCR.release_model();
         }
 
@@ -56,6 +58,12 @@ namespace SHMTU_CAS_OCR_Demo_WPF
         private static void ReleaseModel()
         {
             CAS_OCR.release_model();
+        }
+
+        private void ButtonReleaseModel_Click(object sender, RoutedEventArgs e)
+        {
+            CAS_OCR.release_model();
+            MessageBox.Show("Model released.", "Tip");
         }
     }
 }

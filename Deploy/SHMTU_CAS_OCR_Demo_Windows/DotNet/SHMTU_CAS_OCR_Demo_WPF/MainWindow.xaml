@@ -19,8 +19,12 @@
                 VerticalAlignment="Top" Click="ButtonOpenLocal_Click" Height="32" Width="140" FontSize="18" />
         <Label x:Name="LabelInfo" Content="[正在等待您的操作]" HorizontalAlignment="Left" Margin="10,160,0,0"
                VerticalAlignment="Top" Width="405" FontSize="32" />
-        <Label x:Name="label" Content="Author:Haomin Kong" HorizontalAlignment="Left" Margin="424,121,0,0"
+        <Label Content="Author:Haomin Kong" HorizontalAlignment="Left" Margin="424,121,0,0"
                VerticalAlignment="Top" />
+        <CheckBox x:Name="CheckBoxGpu" Content="GPU加速" HorizontalAlignment="Left" Margin="455,178,0,0"
+                  VerticalAlignment="Top" />
+        <Button x:Name="ButtonReleaseModel" Content="释放模型" HorizontalAlignment="Left" Margin="464,151,0,0"
+                VerticalAlignment="Top" Click="ButtonReleaseModel_Click" />
 
     </Grid>
 </Window>

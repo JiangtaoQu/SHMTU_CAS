@@ -15,6 +15,13 @@ void set_widget_image(const HWND image_control, HBITMAP h_bitmap)
 	SendMessage(image_control, STM_SETIMAGE, IMAGE_BITMAP, reinterpret_cast<LPARAM>(h_bitmap));
 }
 
+bool check_box_is_checked(const HWND hWnd)
+{
+	const BOOL is_checked = 
+		SendMessage(hWnd, BM_GETCHECK, 0, 0);
+	return is_checked == BST_CHECKED;
+}
+
 // 获取静态控件的图像并保存到cv::Mat中
 cv::Mat get_image_from_static_control(const HWND h_static_control)
 {

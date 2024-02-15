@@ -4,4 +4,5 @@
 #include <string>
 
 std::string LPCWSTRToString(LPCWSTR str);
+
 LPCWSTR StringToLPCWSTR(const std::string& str);

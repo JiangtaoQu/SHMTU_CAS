@@ -18,8 +18,20 @@
 constexpr auto window_main_size_width = 520;
 constexpr auto window_main_size_height = 300;
 
-// 全局变量
-HWND hButton1, hButton2, hImageControl, hLabel;;
+// 句柄
+HWND hMainWindow,
+     hButton1, hButton2, hButton3, hButton4,
+     hImageControl,
+     hLabel,
+     hCheckbox;
+
+// 按钮标识
+#define ID_BUTTON_1 1001
+#define ID_BUTTON_2 1002
+#define ID_BUTTON_3 1003
+#define ID_BUTTON_4 1004
+// 复选框控件的标识符
+#define ID_CHECKBOX_USE_GPU 1101
 
 // ReSharper disable once IdentifierTypo
 #define MAX_LOADSTRING 100  // NOLINT(modernize-macro-to-enum)
@@ -124,6 +136,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		nullptr, nullptr, hInstance, nullptr
 	);
 
+	hMainWindow = hWnd;
+
 	// 设置不可调整大小
 	SetWindowLong(hWnd, GWL_STYLE, GetWindowLong(hWnd, GWL_STYLE) & ~WS_THICKFRAME);
 
@@ -162,34 +176,60 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_CREATE:
 		{
 			// 创建按钮-从URL加载图片
-			hButton1 = CreateWindow(TEXT("BUTTON"), TEXT("Download URL"),
-			                        WS_VISIBLE | WS_CHILD,
-			                        400, 20, 100, 30,
-			                        hWnd, reinterpret_cast<HMENU>(1), NULL, NULL);
+			hButton1 = CreateWindow(
+				TEXT("BUTTON"), TEXT("Download URL"),
+				WS_VISIBLE | WS_CHILD,
+				400, 20, 100, 30,
+				hWnd, reinterpret_cast<HMENU>(ID_BUTTON_1), NULL, NULL
+			);
 
 			// 创建按钮-OCR
-			hButton2 = CreateWindow(TEXT("BUTTON"), TEXT("OCR"),
-			                        WS_VISIBLE | WS_CHILD,
-			                        400, 60, 100, 30,
-			                        hWnd, reinterpret_cast<HMENU>(2), NULL, NULL);
+			hButton2 = CreateWindow(
+				TEXT("BUTTON"), TEXT("OCR"),
+				WS_VISIBLE | WS_CHILD,
+				400, 60, 100, 30,
+				hWnd, reinterpret_cast<HMENU>(ID_BUTTON_2), NULL, NULL
+			);
 
 			// 创建按钮-从本地打开
-			hButton2 = CreateWindow(TEXT("BUTTON"), TEXT("Local Image"),
-			                        WS_VISIBLE | WS_CHILD,
-			                        400, 100, 100, 30,
-			                        hWnd, reinterpret_cast<HMENU>(3), NULL, NULL);
+			hButton3 = CreateWindow(
+				TEXT("BUTTON"), TEXT("Local Image"),
+				WS_VISIBLE | WS_CHILD,
+				400, 100, 100, 30,
+				hWnd, reinterpret_cast<HMENU>(ID_BUTTON_3), NULL, NULL
+			);
 
 			// 创建显示图片的控件
-			hImageControl = CreateWindow(TEXT("STATIC"), NULL,
-			                             WS_VISIBLE | WS_CHILD | SS_BITMAP,
-			                             0, 0, 400, 140,
-			                             hWnd, NULL, NULL, NULL);
+			hImageControl = CreateWindow(
+				TEXT("STATIC"), NULL,
+				WS_VISIBLE | WS_CHILD | SS_BITMAP,
+				0, 0, 400, 140,
+				hWnd, NULL, NULL, NULL
+			);
 
 			// 显示OCR结果
-			hLabel = CreateWindow(TEXT("STATIC"), TEXT("[Wait For OCR]"),
-			                      WS_VISIBLE | WS_CHILD | SS_CENTER,
-			                      10, 150, 200, 30,
-			                      hWnd, NULL, NULL, NULL);
+			hLabel = CreateWindow(
+				TEXT("STATIC"), TEXT("[Wait For OCR]"),
+				WS_VISIBLE | WS_CHILD | SS_CENTER,
+				10, 150, 200, 30,
+				hWnd, NULL, NULL, NULL
+			);
+
+			// 创建复选框控件(是否使用GPU)
+			hCheckbox = CreateWindow(
+				TEXT("BUTTON"), TEXT("Use GPU"),
+				WS_CHILD | WS_VISIBLE | BS_CHECKBOX,
+				400, 140, 100, 30,
+				hWnd, reinterpret_cast<HMENU>(ID_CHECKBOX_USE_GPU), NULL, NULL
+			);
+
+			// 创建按钮-从本地打开
+			hButton4 = CreateWindow(
+				TEXT("BUTTON"), TEXT("Release"),
+				WS_VISIBLE | WS_CHILD,
+				400, 180, 100, 30,
+				hWnd, reinterpret_cast<HMENU>(ID_BUTTON_4), NULL, NULL
+			);
 
 			// Author Info
 			CreateWindow(TEXT("STATIC"), TEXT("Author:Haomin Kong"),
@@ -204,20 +244,45 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (HIWORD(wParam) == BN_CLICKED)
 			{
 				// 检查是哪个按钮被点击
-				if (LOWORD(wParam) == 1)
+				if (LOWORD(wParam) == ID_BUTTON_1)
 				{
 					// 按钮1被点击
+					// 从URL加载图片
 					on_click_btn1(hWnd);
 				}
-				else if (LOWORD(wParam) == 2)
+				else if (LOWORD(wParam) == ID_BUTTON_2)
 				{
 					// 按钮2被点击
+					// OCR识别图片
 					on_click_btn2(hWnd);
 				}
-				else if (LOWORD(wParam) == 3)
+				else if (LOWORD(wParam) == ID_BUTTON_3)
 				{
 					// 按钮3被点击
+					// 打开本地图片
 					on_click_btn3(hWnd);
+				}
+				else if (LOWORD(wParam) == ID_BUTTON_4)
+				{
+					// 按钮4被点击
+					// 释放模型
+					void try_to_release_model();
+					try_to_release_model();
+				}
+				else if (LOWORD(wParam) == ID_CHECKBOX_USE_GPU)
+				{
+					// 复选框被点击
+
+					// 获取复选框的状态
+					const BOOL is_checked =
+						SendMessage(hCheckbox, BM_GETCHECK, 0, 0);
+
+					// 切换复选框的状态
+					SendMessage(
+						hCheckbox,
+						BM_SETCHECK, is_checked ? BST_UNCHECKED : BST_CHECKED,
+						0
+					);
 				}
 			}
 
@@ -226,14 +291,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			// 分析菜单选择:
 			switch (wmId)
 			{
+			case ID_MENU_RELEASE:
+				void try_to_release_model();
+				try_to_release_model();
+				break;
+			case IDM_EXIT:
+				DestroyWindow(hWnd);
+				break;
 			case IDM_DOWNLOAD_URL:
 				on_click_btn1(hWnd);
 				break;
 			case IDM_OPEN_LOCAL:
 				on_click_btn3(hWnd);
-				break;
-			case IDM_EXIT:
-				DestroyWindow(hWnd);
 				break;
 			case IDM_DO_OCR:
 				on_click_btn2(hWnd);
@@ -242,8 +311,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 				break;
 			default:
-				return DefWindowProc(hWnd, message, wParam, lParam);
+				break;
 			}
+
+			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
 		break;
 	case WM_PAINT:
@@ -265,6 +336,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
+
 	return 0;
 }
 
@@ -309,12 +381,21 @@ void on_click_btn1(HWND hWnd)
 
 void on_click_btn2(HWND hWnd)
 {
-	CAS_OCR::set_model_gpu_support(true);
+	const auto use_gpu =
+		check_box_is_checked(hCheckbox);
 
-	CAS_OCR::init_model(
-		"",
-		"fp16"
-	);
+#ifdef _DEBUG
+
+	if (use_gpu)
+	{
+		OutputDebugStringW(L"GPU Mode!");
+	}
+	else
+	{
+		OutputDebugStringW(L"CPU Mode!");
+	}
+
+#endif
 
 	if (current_img.empty())
 	{
@@ -325,6 +406,13 @@ void on_click_btn2(HWND hWnd)
 		);
 		return;
 	}
+
+	CAS_OCR::set_model_gpu_support(use_gpu);
+
+	CAS_OCR::init_model(
+		"",
+		"fp16"
+	);
 
 	const auto result =
 		CAS_OCR::predict_validate_code(current_img);
@@ -368,4 +456,14 @@ void on_click_btn3(HWND hWnd)
 		cv::imshow("captcha", img);
 		set_widget_image(hImageControl, img);
 	}
+}
+
+void try_to_release_model()
+{
+	CAS_OCR::release_model();
+	MessageBox(
+		hMainWindow,
+		TEXT("Model Released!"),
+		TEXT("Info"), MB_ICONINFORMATION | MB_OK
+	);
 }
