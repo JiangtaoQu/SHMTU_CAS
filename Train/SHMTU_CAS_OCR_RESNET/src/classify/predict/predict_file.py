@@ -16,7 +16,8 @@ def predict_validate_code(
         device: torch.device,
         model_equal_symbol: torch.nn.Module,
         model_operator: torch.nn.Module,
-        model_digit: torch.nn.Module
+        model_digit: torch.nn.Module,
+        print_result: bool = False
 ) -> (int, str, int, int, int, int):
     img_gray = cv2.cvtColor(img_cv_bgr, cv2.COLOR_BGR2GRAY)
     img_gray = (
@@ -112,7 +113,8 @@ def predict_validate_code(
 
     calc_str = f"{result_digit_1} {operator_str} {result_digit_2} = {calc_result}"
 
-    # print(calc_str)
+    if print_result:
+        print(calc_str)
 
     return (
         calc_result,
@@ -123,15 +125,23 @@ def predict_validate_code(
 
 if __name__ == "__main__":
     device = get_recommended_device()
+    print("device:", device)
 
-    model_equal_symbol, model_operator, model_digit = load_model(device)
+    print("Load Model")
+    (
+        model_equal_symbol,
+        model_operator,
+        model_digit
+    ) = load_model(device)
+    print("Load Model Success")
 
     predict_validate_code(
         cv2.imread("test/test1_20240102160004_server.png"),
         device,
         model_equal_symbol,
         model_operator,
-        model_digit
+        model_digit,
+        True
     )
 
     predict_validate_code(
@@ -139,7 +149,8 @@ if __name__ == "__main__":
         device,
         model_equal_symbol,
         model_operator,
-        model_digit
+        model_digit,
+        True
     )
 
     predict_validate_code(
@@ -147,7 +158,8 @@ if __name__ == "__main__":
         device,
         model_equal_symbol,
         model_operator,
-        model_digit
+        model_digit,
+        True
     )
 
     predict_validate_code(
@@ -155,5 +167,24 @@ if __name__ == "__main__":
         device,
         model_equal_symbol,
         model_operator,
-        model_digit
+        model_digit,
+        True
+    )
+
+    predict_validate_code(
+        cv2.imread("test/test5_20240102160141_server.png"),
+        device,
+        model_equal_symbol,
+        model_operator,
+        model_digit,
+        True
+    )
+
+    predict_validate_code(
+        cv2.imread("test/test6_20240102160146_server.png"),
+        device,
+        model_equal_symbol,
+        model_operator,
+        model_digit,
+        True
     )

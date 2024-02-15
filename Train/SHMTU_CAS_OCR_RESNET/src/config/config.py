@@ -48,14 +48,14 @@ epoch_equal_symbol = 2
 
 # Operator
 
-model_operator_type = ModelType.ResNet_34
+model_operator_type = ModelType.ResNet_18
 
 epoch_operator = 3
 
 # Digit
 
 data_transform_rotate_degree = 15
-model_digit_type = ModelType.ResNet_50
+model_digit_type = ModelType.ResNet_34
 pretrain_on_mnist = True
 
 epoch_mnist = 3

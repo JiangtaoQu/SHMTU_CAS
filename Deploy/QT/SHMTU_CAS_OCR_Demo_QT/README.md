@@ -4,7 +4,7 @@
 Install Vulkan SDK from [LunarG](https://vulkan.lunarg.com/sdk/home#mac)
 
 ```zsh
-brew install protobuf libomp ncnn
+brew install protobuf libomp ncnn opencv
 ```
 
 ## Ubuntu
