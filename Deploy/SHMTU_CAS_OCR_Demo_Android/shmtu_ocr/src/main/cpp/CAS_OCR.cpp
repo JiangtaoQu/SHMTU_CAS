@@ -190,13 +190,17 @@ namespace CAS_OCR
         const std::string device_type_str =
                 global_use_gpu ? "GPU" : "CPU";
 
-        const auto device_info =
-                get_gpu_info(get_default_gpu_index());
-
         printf("Checkpoint Directory:%s\n", dir_path.c_str());
         printf("Target Device:%s\n", device_type_str.c_str());
-        printf("\tDevice Name:%s\n", device_info.device_name.c_str());
-        printf("\tDevice Memory:%d MB\n", device_info.device_memory);
+
+        if (global_use_gpu)
+        {
+            const auto device_info =
+                    get_gpu_info(get_default_gpu_index());
+
+            printf("\tDevice Name:%s\n", device_info.device_name.c_str());
+            printf("\tDevice Memory:%d MB\n", device_info.device_memory);
+        }
 
         bool isSuccess = true;
 
