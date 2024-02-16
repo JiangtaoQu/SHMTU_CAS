@@ -1,6 +1,8 @@
 ﻿// WindowsProject1.cpp : 定义应用程序的入口点。
 //
 
+#define ADAPT_HIGH_DPI 1
+
 #include "framework.h"
 #include "WinMain1.h"
 // #include <ShellScalingApi.h>
@@ -15,8 +17,12 @@
 
 #include "../NCNN_CLI/CAS_OCR.h"
 
-#define CREATE_DPI_AWARE_WINDOW(lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam, DPI_RATIO) \
-{ \
+#define CREATE_DPI_AWARE_WINDOW( \
+	lpClassName, lpWindowName, dwStyle, \
+	x, y, nWidth, nHeight, \
+	hWndParent, hMenu, hInstance, lpParam, \
+	DPI_RATIO \
+) { \
     CreateWindow( \
 		lpClassName, lpWindowName, dwStyle, \
 		static_cast<int>((x) * (DPI_RATIO)), \
@@ -73,8 +79,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	// TODO: 在此处放置代码。
 
+#if ADAPT_HIGH_DPI
 	// 告知系统应用程序是 DPI 感知的
 	SetProcessDPIAware();
+#endif
 
 	// 初始化全局字符串
 	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -153,7 +161,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	const int dpiX =
 		GetDeviceCaps(screen, LOGPIXELSX);
 	ReleaseDC(nullptr, screen);
+#if ADAPT_HIGH_DPI
 	dpi_ratio = static_cast<float>(dpiX) / static_cast<float>(USER_DEFAULT_SCREEN_DPI);
+#endif
 
 	const int target_window_width =
 		static_cast<int>(window_main_size_width * dpi_ratio);
@@ -224,9 +234,9 @@ BOOL SetWidgetFont(HWND hWndControl)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	void on_click_btn1(HWND hWnd);
-	void on_click_btn2(HWND hWnd);
-	void on_click_btn3(HWND hWnd);
+	void on_click_btn1(HWND hWnd_Button);
+	void on_click_btn2(HWND hWnd_Button);
+	void on_click_btn3(HWND hWnd_Button);
 
 	switch (message)
 	{
@@ -425,15 +435,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			default:
 				break;
 			}
-
-			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
-		break;
+		return DefWindowProc(hWnd, message, wParam, lParam);
 	case WM_PAINT:
 		{
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(hWnd, &ps);
-			// TODO: 在此处添加使用 hdc 的任何绘图代码...
+			// 在此处添加使用 hdc 的任何绘图代码...
 			EndPaint(hWnd, &ps);
 		}
 		break;
@@ -476,7 +484,7 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 
 cv::Mat current_img;
 
-void on_click_btn1(HWND hWnd)
+void on_click_btn1(HWND hWnd_Button)
 {
 	// 按钮1被点击
 	const auto img = get_captcha_by_url();
@@ -488,7 +496,7 @@ void on_click_btn1(HWND hWnd)
 	else
 	{
 		MessageBox(
-			hWnd,
+			hWnd_Button,
 			TEXT("Failed to load image!"),
 			TEXT("Error"),
 			MB_ICONERROR | MB_OK
@@ -496,7 +504,7 @@ void on_click_btn1(HWND hWnd)
 	}
 }
 
-void on_click_btn2(HWND hWnd)
+void on_click_btn2(HWND hWnd_Button)
 {
 	const auto use_gpu =
 		check_box_is_checked(hCheckbox);
@@ -517,7 +525,7 @@ void on_click_btn2(HWND hWnd)
 	if (current_img.empty())
 	{
 		MessageBox(
-			hWnd,
+			hWnd_Button,
 			TEXT("No image loaded!"),
 			TEXT("Error"), MB_ICONERROR | MB_OK
 		);
@@ -539,7 +547,7 @@ void on_click_btn2(HWND hWnd)
 
 	SetWindowText(hLabel, text_lstr);
 	MessageBox(
-		hWnd,
+		hWnd_Button,
 		text_lstr,
 		TEXT("OCR Result"), MB_ICONINFORMATION | MB_OK
 	);
@@ -547,7 +555,7 @@ void on_click_btn2(HWND hWnd)
 	// CAS_OCR::release_model();
 }
 
-void on_click_btn3(HWND hWnd)
+void on_click_btn3(HWND hWnd_Button)
 {
 	const auto lp_output_string = select_pic_str();
 	OutputDebugString(lp_output_string);
@@ -558,12 +566,10 @@ void on_click_btn3(HWND hWnd)
 		return;
 	}
 
-	const auto img = cv::imread(file_path);
-
-	if (img.empty())
+	if (const auto img = cv::imread(file_path); img.empty())
 	{
 		MessageBox(
-			hWnd,
+			hWnd_Button,
 			TEXT("Failed to load image!"),
 			TEXT("Error"), MB_ICONERROR | MB_OK
 		);
