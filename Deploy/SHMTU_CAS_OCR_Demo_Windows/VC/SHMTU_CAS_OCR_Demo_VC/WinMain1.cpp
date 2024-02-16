@@ -9,6 +9,7 @@
 
 #include <opencv2/opencv.hpp>
 
+#include <filesystem>
 #include <string>
 
 #include "SelectUtils.h"
@@ -16,6 +17,8 @@
 #include "WindowUtils.h"
 
 #include "../NCNN_CLI/CAS_OCR.h"
+
+const auto model_type = "fp16";
 
 #define CREATE_DPI_AWARE_WINDOW( \
 	lpClassName, lpWindowName, dwStyle, \
@@ -246,7 +249,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			const UINT dpi = HIWORD(wParam);
 
 			// 获取新的窗口矩形信息
-			const RECT* prcNewWindow = reinterpret_cast<RECT*>(lParam);
+			const RECT* prcNewWindow =
+				reinterpret_cast<RECT*>(lParam);
 
 			// 计算缩放比例
 			const float scale_x =
@@ -439,10 +443,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	case WM_PAINT:
 		{
-			PAINTSTRUCT ps;
-			HDC hdc = BeginPaint(hWnd, &ps);
-			// 在此处添加使用 hdc 的任何绘图代码...
-			EndPaint(hWnd, &ps);
+			// PAINTSTRUCT ps;
+			// HDC hdc = BeginPaint(hWnd, &ps);
+			// // 在此处添加使用 hdc 的任何绘图代码...
+			// EndPaint(hWnd, &ps);
 		}
 		break;
 	case WM_DESTROY:
@@ -534,10 +538,25 @@ void on_click_btn2(HWND hWnd_Button)
 
 	CAS_OCR::set_model_gpu_support(use_gpu);
 
-	CAS_OCR::init_model(
-		"",
-		"fp16"
-	);
+	const auto checkpoint_dir_path = "../../Checkpoint";
+
+	if (
+		std::filesystem::exists(checkpoint_dir_path) &&
+		std::filesystem::is_directory(checkpoint_dir_path)
+		)
+	{
+		CAS_OCR::init_model(
+			"../../Checkpoint",
+			model_type
+		);
+	}
+	else
+	{
+		CAS_OCR::init_model(
+			"./",
+			model_type
+		);
+	}
 
 	const auto result =
 		CAS_OCR::predict_validate_code(current_img);
