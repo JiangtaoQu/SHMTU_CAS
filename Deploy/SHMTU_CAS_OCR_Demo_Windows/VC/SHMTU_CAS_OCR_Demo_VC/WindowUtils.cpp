@@ -3,6 +3,29 @@
 
 #include <vector>
 
+void fix_channels(cv::Mat& cv_mat)
+{
+	// 如果通道数不等于 3，则进行修正
+	if (cv_mat.channels() != 3)
+	{
+		// 如果是单通道或多通道但非 RGB 格式的图像，则转换为 3 通道 RGB 格式
+		if (cv_mat.channels() == 1 || cv_mat.channels() == 4)
+		{
+			cv::Mat temp;
+			// 如果是单通道图像，转换为 3 通道灰度图像
+			cv::cvtColor(cv_mat, temp, cv::COLOR_GRAY2BGR);
+			cv_mat = temp;
+		}
+		else
+		{
+			cv::Mat temp;
+			// 如果是其他多通道图像，转换为 3 通道 RGB 图像
+			cv::cvtColor(cv_mat, temp, cv::COLOR_BGR2RGB);
+			cv_mat = temp;
+		}
+	}
+}
+
 void set_widget_image(const HWND image_control, cv::Mat cv_mat, const bool img_fix_control)
 {
 	if (img_fix_control)
@@ -19,6 +42,8 @@ void set_widget_image(const HWND image_control, cv::Mat cv_mat, const bool img_f
 			cv::Size(control_width, control_height)
 		);
 	}
+
+	fix_channels(cv_mat);
 
 	const auto h_bitmap = cv_mat_2_hbitmap(cv_mat);
 	set_widget_image(image_control, h_bitmap);

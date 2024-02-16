@@ -1,4 +1,4 @@
-// ReSharper disable CppClangTidyClangDiagnosticInvalidUtf8
+﻿// ReSharper disable CppClangTidyClangDiagnosticInvalidUtf8
 
 #include "SelectUtils.h"
 #include "VCUtils.h"
@@ -6,17 +6,17 @@
 #include <string>
 
 #include <Objbase.h>
-// ���� Common Dialog Box API ���ͷ�ļ�
+// 包含 Common Dialog Box API 相关头文件
 #include <Commdlg.h>
-// ���ӵ� Ole32.lib ��
+// 链接到 Ole32.lib 库
 #pragma comment(lib, "Ole32.lib")
 
 LPCWSTR select_file(const LPCWSTR filter)
 {
-	// ��ʼ�� COM
+	// 初始化 COM
 	CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
-	// ���ļ��Ի���
+	// 打开文件对话框
 	OPENFILENAME ofn;
 	TCHAR szFile[MAX_PATH] = {0};
 	ZeroMemory(&ofn, sizeof(ofn));
@@ -32,10 +32,15 @@ LPCWSTR select_file(const LPCWSTR filter)
 
 	if (GetOpenFileName(&ofn) == TRUE)
 	{
-		result = ofn.lpstrFile;
+		// 获取选择的文件路径长度
+		int len = lstrlen(ofn.lpstrFile);
+
+		// 动态分配内存来存储选择的文件路径
+		result = new WCHAR[len + 1];
+		wcscpy_s(const_cast<LPWSTR>(result), len + 1, ofn.lpstrFile);
 	}
 
-	// �ͷ� COM
+	// 释放 COM
 	CoUninitialize();
 
 	return result;
@@ -49,7 +54,7 @@ std::string select_file_path_str(const LPCWSTR filter)
 		return "";
 	}
 	// OutputDebugString(file_path);
-	return LPCWSTRToString(file_path);
+	return ConvertLPCWSTRToStdString(file_path);
 }
 
 LPCWSTR select_pic_str()

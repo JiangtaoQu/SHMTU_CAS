@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #define NCNN_SUPPORT_VULKAN
 
 #include <opencv2/core.hpp>

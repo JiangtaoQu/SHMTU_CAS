@@ -1,44 +1,49 @@
+﻿// ReSharper disable CppClangTidyClangDiagnosticInvalidUtf8
 #include "VCUtils.h"
 
-std::string LPCWSTRToString(LPCWSTR str)
+std::string ConvertLPCWSTRToStdString(LPCWSTR wideString)
 {
-	if (str == nullptr)
-		return "";
+	// 获取宽字符字符串的长度
+	const int wideStringLength =
+		static_cast<int>(wcslen(wideString));
 
-	int len = WideCharToMultiByte(CP_UTF8, 0, str, -1, NULL, 0, NULL, NULL);
-	if (len == 0)
-		return "";
+	// 计算需要的缓冲区大小
+	const int bufferSize =
+		WideCharToMultiByte(
+			CP_ACP, 0,
+			wideString, wideStringLength,
+			nullptr, 0,
+			nullptr, nullptr
+		);
 
-	char* buffer = new char[len];
-	WideCharToMultiByte(CP_UTF8, 0, str, -1, buffer, len, NULL, NULL);
+	// 分配缓冲区
+	std::string result(bufferSize, '\0');
 
-	std::string result(buffer);
-
-	delete[] buffer;
+	// 将宽字符字符串转换为窄字符字符串
+	WideCharToMultiByte(
+		CP_ACP, 0,
+		wideString, wideStringLength,
+		result.data(), bufferSize,
+		nullptr, nullptr
+	);
 
 	return result;
 }
 
-// LPCWSTR StringToLPCWSTR(const std::string str)
-// {
-// 	int len = MultiByteToWideChar(
-// 		CP_UTF8, 0, str.c_str(), -1, nullptr, 0);
-// 	if (len == 0)
-// 		return nullptr;
-//
-// 	const auto buffer = new wchar_t[len];
-// 	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, buffer, len);
-//
-// 	const LPCWSTR result = buffer;
-//
-// 	delete[] buffer;
-//
-// 	return result;
-// }
-
-LPCWSTR StringToLPCWSTR(const std::string& str) {
+LPCWSTR StringToLPCWSTR(const std::string& str)
+{
 	static std::wstring wideStr;
-	wideStr.resize(MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, nullptr, 0));
-	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &wideStr[0], wideStr.size());
+	wideStr.resize(
+		MultiByteToWideChar(
+			CP_UTF8, 0,
+			str.c_str(), -1,
+			nullptr, 0
+		)
+	);
+	MultiByteToWideChar(
+		CP_UTF8, 0,
+		str.c_str(), -1,
+		wideStr.data(), static_cast<int>(wideStr.size())
+	);
 	return wideStr.c_str();
 }

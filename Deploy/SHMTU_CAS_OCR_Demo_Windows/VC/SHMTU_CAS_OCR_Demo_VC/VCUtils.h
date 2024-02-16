@@ -3,6 +3,6 @@
 #include <Windows.h>
 #include <string>
 
-std::string LPCWSTRToString(LPCWSTR str);
+std::string ConvertLPCWSTRToStdString(LPCWSTR wideString);
 
 LPCWSTR StringToLPCWSTR(const std::string& str);

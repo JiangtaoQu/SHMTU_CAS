@@ -273,7 +273,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			hButton1 = CREATE_DPI_AWARE_WINDOW(
 				TEXT("BUTTON"), TEXT("Download URL"),
 				WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
-				400, 20, 130, 30,
+				410, 20, 120, 30,
 				hWnd, reinterpret_cast<HMENU>(ID_BUTTON_1), NULL, NULL,
 				dpi_ratio
 			);
@@ -283,7 +283,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			hButton2 = CREATE_DPI_AWARE_WINDOW(
 				TEXT("BUTTON"), TEXT("OCR"),
 				WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
-				400, 60, 130, 30,
+				410, 60, 120, 30,
 				hWnd, reinterpret_cast<HMENU>(ID_BUTTON_2), NULL, NULL,
 				dpi_ratio
 			);
@@ -293,7 +293,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			hButton3 = CREATE_DPI_AWARE_WINDOW(
 				TEXT("BUTTON"), TEXT("Local Image"),
 				WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
-				400, 100, 130, 30,
+				410, 100, 120, 30,
 				hWnd, reinterpret_cast<HMENU>(ID_BUTTON_3), NULL, NULL,
 				dpi_ratio
 			);
@@ -313,7 +313,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			hCheckbox = CREATE_DPI_AWARE_WINDOW(
 				TEXT("BUTTON"), TEXT("Use GPU"),
 				WS_CHILD | WS_VISIBLE | BS_CHECKBOX,
-				400, 140, 130, 30,
+				410, 140, 120, 30,
 				hWnd, reinterpret_cast<HMENU>(ID_CHECKBOX_USE_GPU), NULL, NULL,
 				dpi_ratio
 			);
@@ -323,7 +323,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			hButton4 = CREATE_DPI_AWARE_WINDOW(
 				TEXT("BUTTON"), TEXT("Release"),
 				WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
-				400, 180, 130, 30,
+				410, 180, 120, 30,
 				hWnd, reinterpret_cast<HMENU>(ID_BUTTON_4), NULL, NULL,
 				dpi_ratio
 			);
@@ -487,9 +487,9 @@ cv::Mat current_img;
 void on_click_btn1(HWND hWnd_Button)
 {
 	// 按钮1被点击
-	const auto img = get_captcha_by_url();
-	if (!img.empty())
+	if (auto img = get_captcha_by_url(); !img.empty())
 	{
+		fix_channels(img);
 		current_img = img;
 		set_widget_image(hImageControl, current_img);
 	}
@@ -560,13 +560,20 @@ void on_click_btn3(HWND hWnd_Button)
 	const auto lp_output_string = select_pic_str();
 	OutputDebugString(lp_output_string);
 
-	const auto file_path = LPCWSTRToString(lp_output_string);
+	const auto file_path =
+		ConvertLPCWSTRToStdString(lp_output_string);
+
 	if (file_path.empty())
 	{
+		MessageBox(
+			hWnd_Button,
+			TEXT("File Path is Empty!!!"),
+			TEXT("Error"), MB_ICONERROR | MB_OK
+		);
 		return;
 	}
 
-	if (const auto img = cv::imread(file_path); img.empty())
+	if (auto img = cv::imread(file_path); img.empty())
 	{
 		MessageBox(
 			hWnd_Button,
@@ -576,7 +583,8 @@ void on_click_btn3(HWND hWnd_Button)
 	}
 	else
 	{
-		cv::imshow("captcha", img);
+		fix_channels(img);
+		current_img = img;
 		set_widget_image(hImageControl, img);
 	}
 }
@@ -584,6 +592,7 @@ void on_click_btn3(HWND hWnd_Button)
 void try_to_release_model()
 {
 	CAS_OCR::release_model();
+
 	MessageBox(
 		hMainWindow,
 		TEXT("Model Released!"),
