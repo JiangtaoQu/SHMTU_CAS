@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "ImageUtils.h"
 
-void set_widget_image(HWND image_control, cv::Mat cv_mat);
+void set_widget_image(HWND image_control, cv::Mat cv_mat, bool img_fix_control = true);
 
 void set_widget_image(HWND image_control, HBITMAP h_bitmap);
 

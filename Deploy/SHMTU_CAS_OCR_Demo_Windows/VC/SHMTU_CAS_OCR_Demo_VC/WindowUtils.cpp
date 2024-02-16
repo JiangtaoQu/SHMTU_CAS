@@ -3,8 +3,23 @@
 
 #include <vector>
 
-void set_widget_image(const HWND image_control, cv::Mat cv_mat)
+void set_widget_image(const HWND image_control, cv::Mat cv_mat, const bool img_fix_control)
 {
+	if (img_fix_control)
+	{
+		RECT rect;
+		GetClientRect(image_control, &rect);
+
+		const int control_width = rect.right - rect.left;
+		const int control_height = rect.bottom - rect.top;
+
+		cv::resize(
+			cv_mat,
+			cv_mat,
+			cv::Size(control_width, control_height)
+		);
+	}
+
 	const auto h_bitmap = cv_mat_2_hbitmap(cv_mat);
 	set_widget_image(image_control, h_bitmap);
 }
@@ -17,7 +32,7 @@ void set_widget_image(const HWND image_control, HBITMAP h_bitmap)
 
 bool check_box_is_checked(const HWND hWnd)
 {
-	const BOOL is_checked = 
+	const BOOL is_checked =
 		SendMessage(hWnd, BM_GETCHECK, 0, 0);
 	return is_checked == BST_CHECKED;
 }

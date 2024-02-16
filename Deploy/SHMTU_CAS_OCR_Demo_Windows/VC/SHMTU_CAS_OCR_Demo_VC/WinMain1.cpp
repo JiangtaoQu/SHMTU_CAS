@@ -15,8 +15,22 @@
 
 #include "../NCNN_CLI/CAS_OCR.h"
 
-constexpr auto window_main_size_width = 520;
+#define CREATE_DPI_AWARE_WINDOW(lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam, DPI_RATIO) \
+{ \
+    CreateWindow( \
+		lpClassName, lpWindowName, dwStyle, \
+		static_cast<int>((x) * (DPI_RATIO)), \
+		static_cast<int>((y) * (DPI_RATIO)), \
+		static_cast<int>((nWidth) * (DPI_RATIO)), \
+		static_cast<int>((nHeight) * (DPI_RATIO)), \
+		hWndParent, hMenu, hInstance, lpParam \
+	) \
+}
+
+constexpr auto window_main_size_width = 550;
 constexpr auto window_main_size_height = 300;
+constexpr auto size_font_base = 16;
+const auto FONT_NAME = TEXT("Arial");
 
 // 句柄
 HWND hMainWindow,
@@ -24,6 +38,8 @@ HWND hMainWindow,
      hImageControl,
      hLabel,
      hCheckbox;
+
+float dpi_ratio = 1.0f;
 
 // 按钮标识
 #define ID_BUTTON_1 1001
@@ -56,6 +72,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
 	// TODO: 在此处放置代码。
+
+	// 告知系统应用程序是 DPI 感知的
+	SetProcessDPIAware();
 
 	// 初始化全局字符串
 	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -129,14 +148,30 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	// 设置 DPI 感知，但是操作系统至少Windows 8.1(NTDDI_VERSION >= NTDDI_WINBLUE)
 	// SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
 
-	HWND hWnd = CreateWindowW(
+	// 获取设备的 DPI
+	const HDC screen = GetDC(nullptr);
+	const int dpiX =
+		GetDeviceCaps(screen, LOGPIXELSX);
+	ReleaseDC(nullptr, screen);
+	dpi_ratio = static_cast<float>(dpiX) / static_cast<float>(USER_DEFAULT_SCREEN_DPI);
+
+	const int target_window_width =
+		static_cast<int>(window_main_size_width * dpi_ratio);
+	const int target_window_height =
+		static_cast<int>(window_main_size_height * dpi_ratio);
+
+	const HWND hWnd = CreateWindowW(
 		szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT,
-		window_main_size_width, window_main_size_height,
+		target_window_width, target_window_height,
 		nullptr, nullptr, hInstance, nullptr
 	);
 
 	hMainWindow = hWnd;
+
+	const std::wstring dpi_str =
+		L"DPI Scale Ratio:" + std::to_wstring(dpi_ratio);
+	OutputDebugString(dpi_str.c_str());
 
 	// 设置不可调整大小
 	SetWindowLong(hWnd, GWL_STYLE, GetWindowLong(hWnd, GWL_STYLE) & ~WS_THICKFRAME);
@@ -153,6 +188,28 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	UpdateWindow(hWnd);
 
 	return TRUE;
+}
+
+// 设置控件字体大小的函数实现
+BOOL SetControlFont(HWND hWndControl, int nHeight, LPCTSTR lpszFace)
+{
+	HFONT hFont = CreateFont(nHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
+	                         CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, lpszFace);
+	if (hFont == nullptr)
+		return FALSE;
+
+	SendMessage(hWndControl, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(TRUE, 0));
+
+	return TRUE;
+}
+
+BOOL SetWidgetFont(HWND hWndControl)
+{
+	return SetControlFont(
+		hWndControl,
+		static_cast<int>(size_font_base * dpi_ratio),
+		FONT_NAME
+	);
 }
 
 //
@@ -173,69 +230,123 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	switch (message)
 	{
+	case WM_DPICHANGED:
+		{
+			// 获取新的 DPI 信息
+			const UINT dpi = HIWORD(wParam);
+
+			// 获取新的窗口矩形信息
+			const RECT* prcNewWindow = reinterpret_cast<RECT*>(lParam);
+
+			// 计算缩放比例
+			const float scale_x =
+				static_cast<float>(dpi) / static_cast<float>(USER_DEFAULT_SCREEN_DPI);
+			const float scale_y = scale_x;
+
+			// 计算新的宽度和高度
+			const int new_width = static_cast<int>(window_main_size_width * scale_x);
+			const int new_height = static_cast<int>(window_main_size_height * scale_y);
+
+			// 设置新的窗口大小
+			SetWindowPos(
+				hWnd, nullptr,
+				prcNewWindow->left, prcNewWindow->top,
+				new_width, new_height,
+				SWP_NOZORDER | SWP_NOACTIVATE
+			);
+
+			return 0;
+		}
 	case WM_CREATE:
 		{
 			// 创建按钮-从URL加载图片
-			hButton1 = CreateWindow(
+			hButton1 = CREATE_DPI_AWARE_WINDOW(
 				TEXT("BUTTON"), TEXT("Download URL"),
-				WS_VISIBLE | WS_CHILD,
-				400, 20, 100, 30,
-				hWnd, reinterpret_cast<HMENU>(ID_BUTTON_1), NULL, NULL
+				WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
+				400, 20, 130, 30,
+				hWnd, reinterpret_cast<HMENU>(ID_BUTTON_1), NULL, NULL,
+				dpi_ratio
 			);
+			SetWidgetFont(hButton1);
 
 			// 创建按钮-OCR
-			hButton2 = CreateWindow(
+			hButton2 = CREATE_DPI_AWARE_WINDOW(
 				TEXT("BUTTON"), TEXT("OCR"),
-				WS_VISIBLE | WS_CHILD,
-				400, 60, 100, 30,
-				hWnd, reinterpret_cast<HMENU>(ID_BUTTON_2), NULL, NULL
+				WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
+				400, 60, 130, 30,
+				hWnd, reinterpret_cast<HMENU>(ID_BUTTON_2), NULL, NULL,
+				dpi_ratio
 			);
+			SetWidgetFont(hButton2);
 
 			// 创建按钮-从本地打开
-			hButton3 = CreateWindow(
+			hButton3 = CREATE_DPI_AWARE_WINDOW(
 				TEXT("BUTTON"), TEXT("Local Image"),
-				WS_VISIBLE | WS_CHILD,
-				400, 100, 100, 30,
-				hWnd, reinterpret_cast<HMENU>(ID_BUTTON_3), NULL, NULL
+				WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
+				400, 100, 130, 30,
+				hWnd, reinterpret_cast<HMENU>(ID_BUTTON_3), NULL, NULL,
+				dpi_ratio
 			);
+			SetWidgetFont(hButton3);
 
 			// 创建显示图片的控件
-			hImageControl = CreateWindow(
+			hImageControl = CREATE_DPI_AWARE_WINDOW(
 				TEXT("STATIC"), NULL,
 				WS_VISIBLE | WS_CHILD | SS_BITMAP,
 				0, 0, 400, 140,
-				hWnd, NULL, NULL, NULL
+				hWnd, NULL, NULL, NULL,
+				dpi_ratio
 			);
-
-			// 显示OCR结果
-			hLabel = CreateWindow(
-				TEXT("STATIC"), TEXT("[Wait For OCR]"),
-				WS_VISIBLE | WS_CHILD | SS_CENTER,
-				10, 150, 200, 30,
-				hWnd, NULL, NULL, NULL
-			);
+			SetWidgetFont(hImageControl);
 
 			// 创建复选框控件(是否使用GPU)
-			hCheckbox = CreateWindow(
+			hCheckbox = CREATE_DPI_AWARE_WINDOW(
 				TEXT("BUTTON"), TEXT("Use GPU"),
 				WS_CHILD | WS_VISIBLE | BS_CHECKBOX,
-				400, 140, 100, 30,
-				hWnd, reinterpret_cast<HMENU>(ID_CHECKBOX_USE_GPU), NULL, NULL
+				400, 140, 130, 30,
+				hWnd, reinterpret_cast<HMENU>(ID_CHECKBOX_USE_GPU), NULL, NULL,
+				dpi_ratio
 			);
+			SetWidgetFont(hCheckbox);
 
-			// 创建按钮-从本地打开
-			hButton4 = CreateWindow(
+			// 创建按钮-从释放模型资源
+			hButton4 = CREATE_DPI_AWARE_WINDOW(
 				TEXT("BUTTON"), TEXT("Release"),
-				WS_VISIBLE | WS_CHILD,
-				400, 180, 100, 30,
-				hWnd, reinterpret_cast<HMENU>(ID_BUTTON_4), NULL, NULL
+				WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
+				400, 180, 130, 30,
+				hWnd, reinterpret_cast<HMENU>(ID_BUTTON_4), NULL, NULL,
+				dpi_ratio
+			);
+			SetWidgetFont(hButton4);
+
+			// 显示OCR结果
+			hLabel = CREATE_DPI_AWARE_WINDOW(
+				TEXT("STATIC"), TEXT("[Wait For OCR]"),
+				WS_VISIBLE | WS_CHILD | SS_CENTER,
+				10, 150, 380, 50,
+				hWnd, NULL, NULL, NULL,
+				dpi_ratio
+			);
+			SetControlFont(
+				hLabel,
+				static_cast<int>(size_font_base * 2.5 * dpi_ratio),
+				FONT_NAME
 			);
 
 			// Author Info
-			CreateWindow(TEXT("STATIC"), TEXT("Author:Haomin Kong"),
-			             WS_VISIBLE | WS_CHILD | SS_CENTER,
-			             10, 180, 200, 30,
-			             hWnd, NULL, NULL, NULL);
+			const HWND label_author =
+				CREATE_DPI_AWARE_WINDOW(
+					TEXT("STATIC"), TEXT("Author:Haomin Kong"),
+					WS_VISIBLE | WS_CHILD | SS_CENTER,
+					10, 210, 380, 30,
+					hWnd, NULL, NULL, NULL,
+					dpi_ratio
+				);
+			SetControlFont(
+				label_author,
+				static_cast<int>(size_font_base * 1.5 * dpi_ratio),
+				FONT_NAME
+			);
 		}
 		break;
 	case WM_COMMAND:
@@ -274,13 +385,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					// 复选框被点击
 
 					// 获取复选框的状态
-					const BOOL is_checked =
+					const LRESULT is_checked =
 						SendMessage(hCheckbox, BM_GETCHECK, 0, 0);
+					const bool is_checked_bool = is_checked == BST_CHECKED;
 
 					// 切换复选框的状态
 					SendMessage(
 						hCheckbox,
-						BM_SETCHECK, is_checked ? BST_UNCHECKED : BST_CHECKED,
+						BM_SETCHECK, is_checked_bool ? BST_UNCHECKED : BST_CHECKED,
 						0
 					);
 				}
@@ -375,7 +487,12 @@ void on_click_btn1(HWND hWnd)
 	}
 	else
 	{
-		MessageBox(hWnd, TEXT("Failed to load image!"), TEXT("Error"), MB_ICONERROR | MB_OK);
+		MessageBox(
+			hWnd,
+			TEXT("Failed to load image!"),
+			TEXT("Error"),
+			MB_ICONERROR | MB_OK
+		);
 	}
 }
 
