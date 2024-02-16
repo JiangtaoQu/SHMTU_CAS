@@ -29,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
     setQPushButtonFixedSize(ui->pushButton_DownloadUrl);
     setQPushButtonFixedSize(ui->pushButton_ocr);
     setQPushButtonFixedSize(ui->pushButton_OpenLocal);
+    setQPushButtonFixedSize(ui->pushButton_ReleaseModel);
 }
 
 MainWindow::~MainWindow() {
@@ -196,6 +197,11 @@ void MainWindow::on_pushButton_OpenLocal_clicked() {
     }
 }
 
+void MainWindow::on_pushButton_ReleaseModel_clicked() {
+    void ReleaseModel();
+    ReleaseModel();
+}
+
 void MainWindow::SetPixelMapToLabel(QLabel *label, const QPixmap &pixmap) {
     if (pixmap.isNull()) {
         std::cerr << "Pixmap is null!" << std::endl;
@@ -217,7 +223,8 @@ void MainWindow::SetPixelMapToLabel(QLabel *label, const QPixmap &pixmap) {
 }
 
 void MainWindow::on_actionReleaseModel_triggered() {
-    CAS_OCR::release_model();
+    void ReleaseModel();
+    ReleaseModel();
 }
 
 void MainWindow::on_actionExit_triggered() {
@@ -262,6 +269,20 @@ void MainWindow::on_actionAbout_triggered() {
         "Current Path:" + currentDirQStr + "\n"
     );
     msgBox.setWindowTitle("About");
+    msgBox.setIcon(QMessageBox::Information);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+
+    msgBox.exec();
+}
+
+void ReleaseModel() {
+    CAS_OCR::release_model();
+
+    QMessageBox msgBox;
+    msgBox.setText(
+        "模型已释放！"
+    );
+    msgBox.setWindowTitle("Info");
     msgBox.setIcon(QMessageBox::Information);
     msgBox.setStandardButtons(QMessageBox::Ok);
 

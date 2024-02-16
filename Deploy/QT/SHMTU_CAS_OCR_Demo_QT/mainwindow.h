@@ -39,6 +39,8 @@ private slots:
 
     void on_actionAbout_triggered();
 
+    void on_pushButton_ReleaseModel_clicked();
+
 private:
     Ui::MainWindow *ui;
     QPixmap _innerBitmap;

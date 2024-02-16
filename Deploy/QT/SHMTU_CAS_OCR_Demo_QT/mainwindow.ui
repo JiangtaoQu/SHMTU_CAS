@@ -31,7 +31,7 @@
     <property name="geometry">
      <rect>
       <x>380</x>
-      <y>150</y>
+      <y>170</y>
       <width>141</width>
       <height>20</height>
      </rect>
@@ -170,6 +170,19 @@
      <string>Use GPU</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_ReleaseModel">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>120</y>
+      <width>100</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>释放模型</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -177,7 +190,7 @@
      <x>0</x>
      <y>0</y>
      <width>530</width>
-     <height>23</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
