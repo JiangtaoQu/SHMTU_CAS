@@ -443,10 +443,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	case WM_PAINT:
 		{
-			// PAINTSTRUCT ps;
-			// HDC hdc = BeginPaint(hWnd, &ps);
-			// // 在此处添加使用 hdc 的任何绘图代码...
-			// EndPaint(hWnd, &ps);
+			// 虽然没用，但是必须保留
+			// 否则在弹出信息框的时候，可能会有很大的延迟
+			PAINTSTRUCT ps;
+			HDC hdc = BeginPaint(hWnd, &ps);
+			// 在此处添加使用 hdc 的任何绘图代码...
+			EndPaint(hWnd, &ps);
 		}
 		break;
 	case WM_DESTROY:
@@ -543,7 +545,7 @@ void on_click_btn2(HWND hWnd_Button)
 	if (
 		std::filesystem::exists(checkpoint_dir_path) &&
 		std::filesystem::is_directory(checkpoint_dir_path)
-		)
+	)
 	{
 		CAS_OCR::init_model(
 			"../../Checkpoint",
