@@ -1,7 +1,10 @@
-\chapter{总结与展望}
+\chapter{分析与展望}
 \label{chapter:12}
 
 \section{内存占用分析}
+
+为了对比这几种GUI框架的内存占用，我统计了每种GUI的每种情况下的内存占用。
+MSVC版本的内存占用情况见表\ref{tab:memory_msvc}，.Net WPF版本的内存占用情况见表\ref{tab:memory_dotnet}，Qt Windows版本的内存占用情况见表\ref{tab:memory_qt_windows}。
 
 \begin{table}[!ht]
 	\centering
@@ -14,7 +17,7 @@
 		GPU加载模型 & 82.5 \\
 		GPU加载模型的峰值 & 334.5 \\ \hline
 	\end{tabular}
-	\label{memory_msvc}
+	\label{tab:memory_msvc}
 \end{table}
 
 \begin{table}[!ht]
@@ -28,7 +31,7 @@
 		GPU加载模型 & 151.5 \\
 		GPU加载模型的峰值 & 415.3 \\ \hline
 	\end{tabular}
-	\label{memory_dotnet}
+	\label{tab:memory_dotnet}
 \end{table}
 
 \begin{table}[!ht]
@@ -42,12 +45,58 @@
 		GPU加载模型 & 89.2 \\
 		GPU加载模型的峰值 & 574.3 \\ \hline
 	\end{tabular}
-	\label{memory_qt_windows}
+	\label{tab:memory_qt_windows}
 \end{table}
 
-\section{总结}
+根据这三个表格，我们可以分析这些GUI框架在MSVC、.Net WPF和Qt Windows版本下的内存占用情况。
+
+\subsection{MSVC版本}
+
+\begin{itemize}
+	\item 程序运行：内存占用为22.3MB，这是相对较低的。
+	\item CPU加载模型：内存占用增加到716.3MB，这可能是因为CPU密集型任务需要更多的内存来处理数据。
+	\item GPU加载模型：内存占用为82.5MB，比程序运行时的内存占用略高，但远低于CPU加载模型。这可能是因为GPU密集型任务更多地依赖于图形处理，而不是内存。
+	\item GPU加载模型的峰值：内存占用达到334.5MB，这可能是因为GPU在处理任务时突然需要更多的内存。
+\end{itemize}
+
+\subsection{.Net WPF版本}
+
+\begin{itemize}
+	\item 程序运行：内存占用为74.5MB，比MSVC版本高。
+	\item CPU加载模型：内存占用高达778.6MB，比MSVC版本更高。这可能是因为.Net WPF在处理CPU密集型任务时比MSVC需要更多的资源。
+	\item GPU加载模型：内存占用为151.5MB，比MSVC版本高，但低于CPU加载模型。
+	\item GPU加载模型的峰值：内存占用达到415.3MB，这是所有框架中GPU加载模型峰值最高的。
+\end{itemize}
+
+\subsection{Qt Windows版本}
+
+\begin{itemize}
+	\item 程序运行：内存占用为26.1MB，略高于MSVC版本。
+	\item CPU加载模型：内存占用为722.2MB，与.Net WPF版本相近，但略高。
+	\item GPU加载模型：内存占用为89.2MB，比MSVC版本高，但低于.Net WPF版本。
+	\item GPU加载模型的峰值：内存占用达到574.3MB，这是所有框架中GPU加载模型峰值第二高的。
+\end{itemize}
+
+\subsection{内存占用总结}
+
+\begin{itemize}
+	\item 在程序运行时，MSVC版本的内存占用最低，而.Net WPF版本的内存占用最高。
+	\item 在CPU加载模型下，.Net WPF和Qt Windows版本的内存占用相近，且都高于MSVC版本。
+	\item 在GPU加载模型下，MSVC版本的内存占用最低，而.Net WPF版本的内存占用最高。
+	\item 在GPU加载模型的峰值下，.Net WPF版本的内存占用最高，Qt Windows版本次之，MSVC版本最低。
+\end{itemize}
+
+这些结果表明，对于CPU密集型任务，MSVC版本可能具有更好的内存效率，而对于GPU密集型任务，MSVC版本在内存使用上也表现良好。另一方面，.Net WPF在处理CPU和GPU密集型任务时可能需要更多的内存资源。Qt Windows版本在内存使用上介于MSVC和.Net WPF之间。
+
+Windows平台下如果追求极值的高效，建议选择MSVC作为GUI主框架，如果为了追求较高的开发效率建议使用.Net技术栈，如果为了追求跨平台建议使用Qt。
 
 \section{展望}
+
+在本文所探讨的模型中，我们仅采用了ResNet这一经典的深度网络架构。尽管ResNet已在许多视觉任务中展现了其强大的性能，但随着深度学习技术的不断进步，我们有理由相信，引入更先进、更高效的网络架构将进一步提升模型的预测精度。例如，Apple提出的FastViT（Fast Vision Transformer）便是一种值得尝试的先进方法。FastViT将Transformer结构应用于视觉任务，通过自注意力机制对图像进行全局和局部的特征提取，从而有可能在复杂场景下提供更精确的特征表示。
+
+此外，为了提高模型预测的准确度，我们还可以考虑引入更多的分割方法。分割方法提供更精细的图像分析，帮助模型更好地理解和识别图像中的细节信息。
+
+因此，未来的研究方向可以包括探索并整合更多先进的网络架构，如FastViT等Vision Transformer方法，以及结合多种分割方法来提升模型在视觉任务中的预测性能。这将有助于推动深度学习在图像处理领域的进一步发展，实现更准确的视觉感知和智能分析。
 
 \section{用到的软件}
 

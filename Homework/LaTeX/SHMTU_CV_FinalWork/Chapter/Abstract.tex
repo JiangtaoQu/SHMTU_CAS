@@ -12,13 +12,17 @@
     %1.5倍行距
     \begin{onehalfspace}
 
-        暂无。
+        本文深入探讨了上海海事大学验证码识别问题的解决方案，并针对此问题构建了一个深度学习网络模型。该模型的设计旨在有效识别并解析海事大学特有的验证码系统，以解决在自动化处理中遇到的挑战。通过精心设计的网络结构和优化算法，模型能够准确识别验证码图像中的字符和图案，实现了高准确率的验证码自动识别。
+
+        在模型构建完成后，本文进一步研究了如何对模型进行量化处理，以减小模型体积并提高推理速度。首先，采用了FP16量化技术，该技术通过将模型参数从32位浮点数转换为16位浮点数，显著降低了模型的存储需求，并加快了推理速度。接着，本文还探索了INT8量化方法，这是一种更为极端的量化策略，将模型参数量化为8位整数，进一步减小了模型体积，并实现了更快的推理速度。
+
+        在模型量化完成后，本文进一步研究了如何将量化后的模型部署到不同的平台上。通过使用NCNN框架，结合MSVC、.Net、Qt、Java和Kotlin等多种编程语言和框架，成功实现了模型在Windows、macOS、Linux和Android等多个操作系统上的部署。这一工作不仅展示了NCNN框架的跨平台兼容性，也为验证码识别技术在不同场景下的应用提供了有力支持。
 
         %\\[12pt]
-        \textbf{\textbf{\heiti 关键词：}}上海海事大学
+        \textbf{\textbf{\heiti 关键词：}}上海海事大学；验证码识别；深度学习；量化；NCNN框架；MSVC；.Net；Qt；Windows；macOS；Linux；Android；部署；跨平台兼容性
     \end{onehalfspace}
 \end{abstract}
-\chead{上海海事大学-期末总结}
+\chead{上海海事大学课程设计}
 \setcounter{page}{1}
 \pagenumbering{Roman}
 \cfoot{\footnotesize \thepage}
@@ -41,14 +45,18 @@
 \begin{enabstract}
     \begin{doublespace}
 
-        None
+        This article delves into the solution for the captcha recognition problem at Shanghai Maritime University and constructs a deep learning network model specifically for this issue. The design of the model aims to effectively recognize and parse the unique captcha system of the maritime university, addressing the challenges encountered in automated processing. Through carefully designed network structures and optimization algorithms, the model can accurately identify characters and patterns in captcha images, achieving a high accuracy rate for automatic captcha recognition.
+
+        After completing the model construction, this article further explores how to quantize the model to reduce its size and improve inference speed. Firstly, FP16 quantization technology is employed, which significantly reduces the storage requirement of the model and accelerates inference speed by converting model parameters from 32-bit floating-point numbers to 16-bit floating-point numbers. Subsequently, this article also investigates the INT8 quantization method, a more extreme quantization strategy that quantizes model parameters to 8-bit integers, further reducing the model size and enabling faster inference speed.
+
+        Upon completing the model quantization, this article further studies how to deploy the quantized model on different platforms. By utilizing the NCNN framework in combination with various programming languages and frameworks such as MSVC, .Net, Qt, Java, and Kotlin, the successful deployment of the model on multiple operating systems including Windows, macOS, Linux, and Android is achieved. This work not only demonstrates the cross-platform compatibility of the NCNN framework but also provides strong support for the application of captcha recognition technology in various scenarios.
 
         %\\[12pt]
-        \textbf{Keywords：}ShangHai Maritime University;
+        \textbf{Keywords：}Shanghai Maritime University; CAPTCHA recognition; Deep learning; Quantization; NCNN framework; Microsoft Visual C++; .Net; Qt; Windows; macOS; Linux; Android; Deployment; Cross-platform compatibility
     \end{doublespace}
 \end{enabstract}
 % 英文摘要和中文摘要在同一页时选择一个页眉
-%\chead{Shanghai Maritime University Course Design}
+\chead{Shanghai Maritime University Course Design}
 \cfoot{\thepage}
 
 % 背面留空

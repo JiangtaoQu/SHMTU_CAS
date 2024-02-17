@@ -233,12 +233,26 @@ libtorch提供了与Python API相似的接口和功能，这意味着开发者�
 \begin{enumerate}
 	\item 验证码识别：首先，利用训练好的模型对验证码进行识别，获取识别结果。
 	\item 自动化登录：通过Selenium模拟用户登录操作，输入账号、密码和识别得到的验证码。
-	\item 结果验证：根据登录操作的反馈，判断验证码的识别结果是否准确。如果登录失败并提示验证码错误，则说明模型识别有误；如果登录失败并提示账号密码错误，则说明模型识别准确。
+	\item 结果验证：根据登录操作的反馈，判断验证码的识别结果是否准确。如果登录失败并提示验证码错误，见图\ref{fig:codeerror}，则说明模型识别有误；如果登录失败并提示账号密码错误，见图\ref{fig:codecorrect}，则说明模型识别准确。
 \end{enumerate}
 
 通过这种方法，我们可以实现模型的自动化验证和批量测试，从而快速发现模型存在的问题并进行优化。同时，这种方法还可以模拟真实用户的使用场景，更准确地评估模型在实际应用中的性能表现。
 
 具体实现见\url{Train/SHMTU_CAS_OCR_RESNET/src/verify/verify_by_model.py}。
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{Resources/Picture/CAS/code_correct}
+	\caption{验证码正确}
+	\label{fig:codecorrect}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{Resources/Picture/CAS/code_error}
+	\caption{验证码错误}
+	\label{fig:codeerror}
+\end{figure}
 
 \subsection{验证结果与模型优化}
 

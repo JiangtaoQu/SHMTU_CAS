@@ -1,24 +1,23 @@
 \chapter{基于Qt C++的跨平台(Windows/macOS/Linux)方案研究}
 \label{chapter:11}
 
-\section{介绍}
+\section{项目介绍}
 
-因为无论是MSVC还是.Net均为Windows下的技术栈，无法部署到其他平台，因此我决定开发一个跨平台的方案，因此我选择了Qt这个成熟的跨平台方案。
+考虑到MSVC和.Net技术栈主要局限于Windows平台，无法实现跨平台部署，我决定探索一种更为灵活和适应性强的解决方案。经过深入研究和比较，我选择了Qt这一成熟且广泛应用的跨平台框架。Qt以其卓越的性能和广泛的兼容性，成为了实现项目跨平台部署的理想选择。
 
-\section{Windows下进行开发}
+\section{Windows环境下的开发实践}
 
-\subsection{开发环境}
+\subsection{开发环境配置}
 
-使用官方编译的Qt6.6.2(2024年2月15日发布)版本，因为官方编译的为动态库版本，因此我没有重新从src编译静态库版本，因此最终Qt程序并编译没有静态库版本。
+为了确保项目的顺利进行，我选择了官方编译的Qt 6.6.2版本（发布日期为2024年2月15日）作为开发基础。由于官方提供的是动态库版本，我决定直接使用这一版本，而未尝试从源代码重新编译静态库版本。因此，最终的Qt应用程序将不包含静态库版本。
 
-\subsection{Qt与MSVC版本代码的区别}
+\subsection{Qt与MSVC代码差异分析}
 
-Qt程序与MSVC主要区别在于，Qt使用QPixmap，因此只需要将QPixmap转换为cv::Mat即可，此外Qt使用信号槽机制来进行事件回调，不同于VC的消息机制，以及.Net直接绑定响应事件。
+在Qt框架与MSVC之间，存在一些显著的区别。Qt主要使用QPixmap对象来处理图像，因此，在将图像数据传递给OpenCV进行处理时，需要进行QPixmap到cv::Mat的转换。这一转换过程在QtOpenCV.cpp文件中得到了详细实现。
 
-QPixmap与cv::Mat的转换请参考\url{Deploy/QT/SHMTU_CAS_OCR_Demo_QT/QtOpenCV.cpp}。
+此外，Qt采用了信号槽机制来实现事件回调，这与MSVC中的消息机制以及.Net的直接事件绑定方式有所不同。这种机制使得Qt在事件处理上更加灵活和高效。
 
-此外我在"CAS\_OCR\_QT.cpp"文件中重载了"predict\_validate\_code"函数，将第一个参数变为QPixmap类型。
-这样就可以方便地在Qt中直接调用MSVC已经完成的C++接口。
+为了更好地兼容Qt和MSVC，我在"CAS\_OCR\_QT.cpp"文件中对"predict\_validate\_code"函数进行了重载。通过修改函数的参数类型为QPixmap，我们可以直接在Qt环境中调用MSVC中已经实现的C++接口，从而简化了跨平台开发的复杂性。
 
 \subsection{界面展示}
 
@@ -46,9 +45,31 @@ QPixmap与cv::Mat的转换请参考\url{Deploy/QT/SHMTU_CAS_OCR_Demo_QT/QtOpenCV
 	\item Qt 6.6.2
 \end{itemize}
 
+\subsection{macOS App Bundle}
+
+macOS App Bundle 是一种特殊的目录结构，用于在 macOS 系统中分发和安装软件。这种目录结构被 macOS 系统识别为一个单独的应用程序实体，用户可以通过双击这个“软件”来运行它。
+
+一个 macOS App Bundle 通常包含以下内容：
+
+\begin{enumerate}
+	\item 可执行文件：这是应用程序的主要执行文件，通常以 .app 作为文件扩展名。这个文件包含了程序运行所需的所有代码。
+	\item 资源文件：这些文件包含了应用程序运行所需的各种资源，如界面元素、图标、声音文件等。这些资源文件通常被组织在 Resources 子目录中。
+	\item 库文件：如果应用程序依赖于特定的库文件，这些库文件也会被包含在 App Bundle 中。这些库文件通常被组织在 Contents/Libraries 或 Contents/Frameworks 子目录中。
+	\item 配置文件：应用程序的配置文件也可能被包含在 App Bundle 中。这些文件通常被组织在 Contents/Resources 或 Contents/Preferences 子目录中。
+	\item 元数据：App Bundle 还可能包含一些元数据文件，如 Info.plist，它包含了应用程序的元信息，如名称、版本、图标等。
+\end{enumerate}
+
+在 macOS 中，"*.app" 目录实际上就是一个特殊的目录结构，它遵循了 macOS 的文件系统规范和命名约定。当你双击一个 .app 文件时，macOS 系统会解析这个目录结构，找到可执行文件并运行它。同时，系统也会根据 App Bundle 中的其他文件和目录来加载资源、配置和库文件，以确保应用程序能够正常运行。
+
+总的来说，macOS App Bundle 是一种方便用户在 macOS 系统上安装和运行软件的方式。它使得应用程序的分发和安装变得更加简单和直接，同时也为应用程序提供了更好的集成和兼容性。
+
 \subsection{生成macOS的icns文件}
 
+macOS的图标不同于Windows平台的iso，为苹果平台专用的icns文件，因此我编写了一个脚本用于自动划分图片尺寸以及生成icns文件，具体请参考\url{Deploy/QT/SHMTU_CAS_OCR_Demo_QT/Resources/shmtu_logo_black/mkicns.sh}。
+
 \subsection{CMake打包CheckPoint}
+
+CMake中包含了脚本，能够在构建.app目录的同时，将Checkpoint目录自动拷贝到Resources中，因此我在C++代码中添加了"\_\_APPLE\_\_"的编译器宏指令，用于判断是否为macOS，如果为macOS，预先设定好的Checkpoint搜索路径将与其他操作系统不同。
 
 \begin{figure}
 	\centering
@@ -85,6 +106,10 @@ QPixmap与cv::Mat的转换请参考\url{Deploy/QT/SHMTU_CAS_OCR_Demo_QT/QtOpenCV
 	\item CLion
 	\item CMake
 \end{enumerate}
+
+\subsection{Linux特殊处理}
+
+Linux的特殊处理在于需要手动导入"feature.h"这个头文件才能实现宏判断当前操作系统。
 
 \subsection{界面展示}
 
