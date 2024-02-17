@@ -92,29 +92,53 @@ Windows平台下如果追求极值的高效，建议选择MSVC作为GUI主框架
 
 \section{展望}
 
-在本文所探讨的模型中，我们仅采用了ResNet这一经典的深度网络架构。尽管ResNet已在许多视觉任务中展现了其强大的性能，但随着深度学习技术的不断进步，我们有理由相信，引入更先进、更高效的网络架构将进一步提升模型的预测精度。例如，Apple提出的FastViT（Fast Vision Transformer）便是一种值得尝试的先进方法。FastViT将Transformer结构应用于视觉任务，通过自注意力机制对图像进行全局和局部的特征提取，从而有可能在复杂场景下提供更精确的特征表示。
+在本文所探讨的模型中，我们仅采用了ResNet这一经典的深度网络架构。尽管ResNet已在许多视觉任务中展现了其强大的性能，但随着深度学习技术的不断进步，我们有理由相信，引入更先进、更高效的网络架构将进一步提升模型的预测精度。例如，Apple提出的FastViT（Fast Vision Transformer）\cite{Vasu_Gabriel_Zhu_Tuzel_Ranjan_2023}便是一种值得尝试的先进方法。FastViT将Transformer结构应用于视觉任务，通过自注意力机制对图像进行全局和局部的特征提取，从而有可能在复杂场景下提供更精确的特征表示。
 
 此外，为了提高模型预测的准确度，我们还可以考虑引入更多的分割方法。分割方法提供更精细的图像分析，帮助模型更好地理解和识别图像中的细节信息。
 
 因此，未来的研究方向可以包括探索并整合更多先进的网络架构，如FastViT等Vision Transformer方法，以及结合多种分割方法来提升模型在视觉任务中的预测性能。这将有助于推动深度学习在图像处理领域的进一步发展，实现更准确的视觉感知和智能分析。
 
+\section{工作量}
+
+我大概使用一万四千行代码完成了本项目，耗时一周多，Github统计的代码占比见图\ref{fig:statgithub}，Tokei统计的每门语言的代码行数见图\ref{fig:stattokei}。
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{Resources/Picture/stat_github}
+	\caption{Github统计的代码占比}
+	\label{fig:statgithub}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{Resources/Picture/stat_tokei}
+	\caption{Tokei统计的代码行数(单位:行)}
+	\label{fig:stattokei}
+\end{figure}
+
 \section{用到的软件}
 
-\subsection{开源软件}
+\subsection{开源软件（仓库）}
 
 \begin{enumerate}
-	\item SHMTU Course LaTex Template(Haomin Kong)\cite{shmtu_course_latex_template}
+	\item SHMTU Course LaTex Template(Haomin Kong Version)\cite{shmtu_course_latex_template}
+	\item Python\cite{python}
 	\item PyTorch\cite{pytorch}
 	\item Digital-SHMTU-Tools\cite{digit_shmtu}
-	\item Selenium
-	\item Protobuf
-	\item Tencent NCNN
-	\item OpenVINO
+	\item Selenium\cite{selenium}
+	\item Tencent NCNN\cite{ncnn}
+	\item OpenVINO\cite{openvino}
+	\item TeXLive\cite{texlive}
+	\item TeXStudio\cite{texstudio}
+	\item OpenCV\cite{opencv}
+	\item Vulkan SDK\cite{vulkan-sdk}
+	\item ONNX\cite{onnx}
 \end{enumerate}
 
 \subsection{商业软件}
 
 \begin{enumerate}
-	\item Jetbrains Pycharm
-	\item Visual Studio
+	\item Jetbrains Pycharm\cite{jetbrains}
+	\item Jetbrains CLion\cite{jetbrains}
+	\item Visual Studio\cite{vs}
 \end{enumerate}
