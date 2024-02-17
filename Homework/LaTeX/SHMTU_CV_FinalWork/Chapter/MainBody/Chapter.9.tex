@@ -1,15 +1,25 @@
 \chapter{Microsoft Windows .Net 平台的部署及混合编译的探究}
 \label{chapter:9dotnet}
 
-\section{背景}
+\section{背景介绍}
 
-\section{解决方案}
+.Net 作为一个功能强大的软件开发平台，长期以来一直支持着多种编程语言和各种应用程序类型的开发。然而，随着应用程序的复杂性和规模不断提升，性能优化成为了开发者必须面对的重要挑战。在这种情况下，混合编译技术应运而生，它通过将部分代码编译为机器代码，显著提高了执行效率，为开发者提供了一种有效的优化手段。
 
-\subsection{Microsoft ML Nuget包}
+微软在当前的技术发展趋势中，已经逐渐将重心转向了C\#的WinForm和WPF技术栈，而传统的VC++则不再是主要推广的焦点。这种转变意味着开发者在构建Windows应用程序时，需要更多地考虑.Net平台上的解决方案。而且WPF不但界面美观还可以完美适配高分屏，无需手动进行适配，节省开发时间。
 
-没有opencv
+\section{解决方案探讨}
 
-\subsection{通过CLR调用C++}
+针对在Microsoft Windows .Net 平台上部署应用程序的需求，本章将介绍两种解决方案，并详细探讨如何结合混合编译技术来提高性能。
+
+\subsection{利用Microsoft ML NuGet包}
+
+Microsoft ML NuGet包为开发者提供了一系列机器学习工具和API，使得在.Net应用程序中部署预训练模型变得更为便捷。通过使用这些工具，开发者可以轻松地集成机器学习功能，而无需具备深厚的C++开发经验。然而，这种方法的一个显著缺点是缺乏灵活性，因为它无法直接利用如OpenCV等第三方库的功能。这意味着，在进行图像处理等相关操作时，开发者可能不得不使用C\# API重新编写代码。
+
+\subsection{通过CLR调用C++代码}
+
+为了弥补Microsoft ML NuGet包在灵活性方面的不足，开发者还可以考虑通过CLR（公共语言运行时）来调用C++编写的代码。通过CLR的桥接作用，C++代码可以无缝集成到.Net应用程序中，从而实现了灵活性和性能的兼顾。当然，这种方法的一个潜在缺点是开发难度较高，要求开发者具备C++开发经验。然而，对于已经熟悉C++的开发者来说，这无疑是一个值得考虑的选择。
+
+此外，这样能够直接调用VC写好的OpenCV图像处理代码以及NCNN推理代码，因此对于我来说，开发成本极低。
 
 \section{工作流程}
 
@@ -23,24 +33,34 @@
 
 \section{CLR程序设计}
 
+在CLR（公共语言运行时）程序设计中，实现C\#与C++之间的交互是一个关键环节。由于两种语言使用的数据类型和库函数存在差异，因此需要进行相应的类型转换和接口设计。
+
+\subsection{图像类型转换}
+
+在C\#中，常用的图像类型是System.Drawing.Bitmap，而C++中则通常使用cv::Mat。为了实现两种语言之间的图像数据共享和处理，需要在CLR ClassLibrary中进行类型转换。在"SHMTU\_CAS\_CLR\_ClassLibrary.cpp"和"ImageUtils.cpp"中，我提供了convert\_bitmap\_to\_cv\_mat和cv\_mat\_2\_hbitmap这两个函数，分别用于将C\#中的Bitmap转换为C++中的cv::Mat，以及将cv::Mat转换回C\#中的Bitmap。这两个函数的实现细节涉及到了像素数据的拷贝和格式转换，以确保数据的一致性和正确性。
+
 \subsection{CLR静态库}
 
-我们无法将CLR的动态库编译为静态库，Visual C++编译器报错提示"/clr"与"/mt"两个参数不可以同时使用，而后者为编译动态库的参数，因此只能使用"/MDd"参数编译动态链接库。因此.Net C\#客户端并没有静态库版本。
+值得注意的是，CLR并不支持将动态库编译为静态库。在尝试使用Visual C++编译器进行编译时，会发现"/clr"与"/mt"（用于编译静态库的参数）不能同时使用。因此，我们只能使用"/MDd"参数来编译动态链接库。这也意味着.Net C\#客户端没有静态库版本可供选择。这种限制是由于CLR的运行机制所决定的，它需要在运行时动态加载和链接C++代码，因此无法将其编译为静态库。
 
 \section{CLR Connector程序设计}
 
+虽然CLR类库是用C++编写的，主要用于实现C\#与C++之间的桥梁作用，但在某些情况下，我们仍然需要在C\#中完成一些特定的操作。为了简化这些操作并进一步提高代码的抽象程度，我使用C\#编写了一个CLR Connector的类库。这个类库提供了一系列高级接口和函数，使得在WPF应用程序中只需使用简单的C\#代码就能完成相关业务逻辑。通过这种方式，我们可以将底层的C++代码封装起来，使得C\#开发者无需关心底层的实现细节，只需关注业务逻辑即可。这不仅提高了代码的可读性和可维护性，也降低了开发难度和成本。
+
 \section{运行截图}
+
+WPF程序的主界面见图\ref{fig:wpfmain}，在Windows 11中的运行界面见图\ref{fig:dotnetwindows}。
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.7\linewidth]{Resources/Picture/wpf_main}
+	\includegraphics[width=0.9\linewidth]{Resources/Picture/Deploy/Windows/DotNet/wpf_main}
 	\caption{WPF 主界面}
 	\label{fig:wpfmain}
 \end{figure}
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.7\linewidth]{Resources/Picture/wpf_memory}
-	\caption{WPF程序内存占用(加载模型后)}
-	\label{fig:wpfmemory}
+	\includegraphics[width=0.9\linewidth]{Resources/Picture/Deploy/Windows/DotNet/DotNet_Windows}
+	\caption{C\# .Net WPF在Windows 11中运行}
+	\label{fig:dotnetwindows}
 \end{figure}

@@ -4,16 +4,27 @@
 
 \section{程序介绍}
 
-上海海事大学验证码识别Demo 是基于前面第\ref{chapter:7}章的VC++代码中的CAS\_OCR.cpp直接移植到Android，然后使用JNI混合编译使用Java调用C++代码。
+上海海事大学验证码识别Demo是一个结合了多种技术的综合性项目。其核心代码基于第\ref{chapter:8}章的VC++代码中的"CAS\_OCR.cpp"，经过精心移植和优化，成功地在Android平台上实现了功能。为了实现跨语言调用，该项目巧妙地运用了JNI（Java Native Interface）技术，将C++代码与Java代码混合编译，使得Java能够直接调用C++中的核心功能。
 
-\section{环境介绍}
+\section{开发环境概述}
 
-Kotlin版本为 1.9.2
-为了与Kotlin进行兼容，因此JRE使用Java 1.8
+为了确保项目的顺利进行，我们选择了适当的开发环境和工具。项目中使用的Kotlin版本为1.9.2，这是一个经过广泛验证且功能强大的编程语言版本。为了与Kotlin兼容，我们选择了Java 1.8作为JRE版本，以确保项目的稳定性和兼容性。
 
-\section{接口设计}
+\section{网络请求处理}
 
-程序核心部分依旧使用OpenCV与NCNN，除此之外还是用JNI相关函数将Android Bitmap转换成OpenCV的cv::Mat，然后进一步进行处理，最后C++输出的std::tuple转换成Java的Object[]。
+在Android开发中，网络请求是一个常见的需求。然而，从Android API 14（即Android 4.0）开始，为了提升用户体验和防止应用卡顿，系统不允许在UI线程执行耗时的网络请求。同时，传统的AsyncTask在Android 12中已被弃用。因此，我们采用了Kotlin语言的协程特性来处理异步网络请求。这种方式不仅简化了代码结构，还提高了应用的响应速度和用户体验。在处理网络请求时，我们将获取的数据转换为Android的Bitmap对象，以便在UI中展示。
+
+\section{接口设计与实现}
+
+该项目的核心功能仍然依赖于OpenCV和NCNN这两个强大的图像处理库。除了直接使用这些库进行图像处理外，我们还通过JNI相关函数将Android平台上的Bitmap对象转换为OpenCV的cv::Mat对象，以便进行进一步的图像处理操作。这样的设计使得我们能够在不改变原有C++代码的基础上，充分利用Android平台的功能和优势。
+
+由于Java语言本身不支持元组输出，这给我们的接口设计带来了一定的挑战。为了解决这个问题，我们将C++中输出的std::tuple类型转换为Java中的Object[]数组类型。这种转换方式虽然增加了一定的复杂性，但确保了Java代码能够正确地处理和使用C++的输出结果。通过精心的接口设计和实现，我们成功地实现了C++与Java之间的无缝对接，使得整个项目能够高效地运行和扩展。
+
+\section{Android与VC环境的差异}
+
+在Android客户端的实现中，一个关键的区别在于模型权重文件的处理方式。不同于传统的VC环境，在Android应用中，模型权重文件是直接被打包进APK文件的。这意味着我们不能像在计算机上那样简单地通过文件路径来访问这些文件。然而，幸运的是，腾讯在开发NCNN时就已经考虑到了移动端的需求，特别是Android操作系统的特性。
+
+NCNN作为一个专门为移动端设计的推理框架，对Android的支持非常出色。具体来说，NCNN提供了"load\_param"和"load\_model"这两个函数，用于在Android平台上加载模型。尽管这两个函数的名称与PC端使用的相同，但在Android NDK环境中，它们的参数有所不同。在Android上，这两个函数接受两个参数：第一个参数是AAssetManager对象的指针，它提供了对APK中assets文件夹的访问；第二个参数则是模型文件的名称。通过这种方式，我们可以轻松地从APK的assets文件夹中加载模型权重文件，实现了在Android平台上的无缝集成。
 
 \section{使用说明}
 
@@ -25,16 +36,18 @@ Kotlin版本为 1.9.2
 
 \section{运行截图}
 
+APP的桌面启动器图标如图\ref{fig:androiddesktop}所示，而APP的运行界面则如图\ref{fig:activitymain}所展示。关于APP的详细信息，请参考图\ref{fig:appinfo}。值得一提的是，由于我们采用了FP16模型进行优化，使得移动端程序的体积得以显著缩小，仅为117MB。APK文件的体积更是精简至107MB。尽管APK中包含了'x86'、'x86\_64'、'armv7'和'arm64'这四种ABI，导致了体积的相对增大，但我们仍然努力实现了体积的最小化。此外，从Android 5.0版本开始，系统采用了ART虚拟机，这意味着在安装过程中会对程序进行编译优化，因此最终的程序体积达到了117MB。这些优化措施不仅提升了用户体验，还确保了APP的高效运行。
+
 \begin{figure}
 	\centering
-	\includegraphics[width=0.6\linewidth]{Resources/Picture/android_desktop}
+	\includegraphics[width=0.6\linewidth]{Resources/Picture/Deploy/Android/android_desktop}
 	\caption{Android APP 桌面图标}
 	\label{fig:androiddesktop}
 \end{figure}
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.6\linewidth]{Resources/Picture/activity_main}
+	\includegraphics[width=0.6\linewidth]{Resources/Picture/Deploy/Android/activity_main}
 	\caption{Android APP 主界面}
 	\label{fig:activitymain}
 \end{figure}
@@ -42,7 +55,7 @@ Kotlin版本为 1.9.2
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.6\linewidth]{Resources/Picture/app_info}
+	\includegraphics[width=0.6\linewidth]{Resources/Picture/Deploy/Android/app_info}
 	\caption{Android APP 信息}
 	\label{fig:appinfo}
 \end{figure}
