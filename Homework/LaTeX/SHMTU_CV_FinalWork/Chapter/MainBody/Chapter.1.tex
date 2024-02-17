@@ -73,7 +73,29 @@
 	\item NCNN推理框架
 \end{enumerate}
 
-\section{开发环境}
+\section{环境要求}
+
+Windows平台以及Android平台都有方案兼容10年前以前的操作系统，因此无需担心兼容性。
+
+\subsection{MSVC版本}
+
+经过我的测试Windows 7(发布于2019年)可以完美运行。
+此外VC运行库官网标注支持Vista操作系统，因此XP以及以上版本操作系统理论上能够正常运行。
+
+\subsection{Qt版本}
+
+Qt支持Windows 7以上版本，但是并不支持Windows 7，而且可能需要安装Direct X图形库。
+
+\subsection{.Net版本}
+
+可能是需要至少Windows 10操作系统。
+
+\subsection{Android平台}
+
+最低运行操作系统版本为Android API 21即Android 5.0(Lollipop)。
+API 21发布于2014年，恰好为10年前，这个版本使用ART虚拟机代替了Dalvik虚拟机，因此我选择这个版本作为最低版本。
+
+\section{开发(参考)环境}
 
 下面给出我使用的开发环境供参考。
 

@@ -293,11 +293,53 @@ NCNN FP16量化脚本(\ref{code:ncnn_fp16})请参考\url{Train/SHMTU_CAS_OCR_RES
 
 \end{lstlisting}
 
+ncnnoptimize工具能够自动将FP32模型量化为FP16模型，而且精度损失不会太大。
+
 \subsection{INT8静态量化}
+
+\begin{enumerate}
+	\item 将ONNX转换为NCNN格式
+	\item 进行FP16量化(可选)
+	\item 准备一组数据用于校准
+	\item 使用ncnn2table生成校准表
+	\item 使用ncnn2int8进行INT8量化
+\end{enumerate}
+
+\subsubsection{生成校准表}
+
+\begin{lstlisting}[caption={生成校准表},label=code:ncnn_int8_table]
+	./ncnn2table `
+		r34_digit.param `
+		r34_digit.bin image_digit_list.txt `
+		r34_digit.table `
+		mean=[123.675,116.280,103.530] `
+		norm=[0.017,0.018,0.017] `
+		shape=[1,3,224,224] `
+		pixel=RGB `
+		thread=8 `
+		method=kl
+\end{lstlisting}
+
+具体命令行请参考代码\ref{code:ncnn_int8_table}
+
+\begin{enumerate}
+	\item 使用"find image\_digit/ -type f > image\_digit\_list.txt"将图片文件名生成txt格式列表
+	\item 使用ncnn2table工具生成校准表
+\end{enumerate}
+
+\subsubsection{静态量化}
+
+将FP32模型或FP16模型，以及校准表传入ncnn2int8工具即可进行INT8量化，具体命令行请参考代码\ref{code:ncnn_int8_q}。
+
+\begin{lstlisting}[caption={NCNN INT8量化},label=code:ncnn_int8_q]
+	./ncnn2int8 r34_digit.param r34_digit.bin r34_digit_8.param r34_digit_8.bin r34_digit.table
+\end{lstlisting}
 
 \section{实验}
 
 \subsection{FP16}
+
+经过Selenium的验证，FP16模型能够有90\%的正确率，因此适合进行部署。
 
 \subsection{INT8}
 

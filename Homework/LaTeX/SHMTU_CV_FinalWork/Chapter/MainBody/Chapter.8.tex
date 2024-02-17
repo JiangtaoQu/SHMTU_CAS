@@ -91,18 +91,11 @@ ncnn是一个高效的神经网络前向计算框架，支持使用Vulkan进行�
 	// ... 其他必要的NCNN和Vulkan头文件 ...
 
 	int main() {
-		// 初始化Vulkan设备和实例（伪代码）
-		// vulkanDevice = initializeVulkanDevice(...);
-		// vulkanQueueFamilyIndex = getVulkanQueueFamilyIndex(...);
-
 		// 初始化NCNN网络，并启用Vulkan支持
 		ncnn::Net net;
-		net.opt.use_vulkan_compute = true;  // 启用Vulkan计算
-		// 设置Vulkan设备和队列家族索引（如果有必要的话）
-		// net.set_vulkan_device(vulkanDevice);
-		// net.set_vulkan_queue_family_index(
-		//     vulkanQueueFamilyIndex
-		// );
+
+		// 启用Vulkan计算
+		net.opt.use_vulkan_compute = true;
 
 		// 加载模型
 		net.load_param("model.param");
@@ -182,20 +175,9 @@ ONNX（Open Neural Network Exchange）是一种用于表示深度学习模型的
 	\item 将CMake添加到系统路径中，以便在命令行中使用。
 \end{enumerate}
 
-\subsection{编译Protobuf}
-
-\subsubsection{一般步骤}
-
-\begin{enumerate}
-	\item 前往Protobuf的GitHub仓库（\url{https://github.com/protocolbuffers/protobuf}）克隆或下载源代码。
-	\item 如果下载的是源代码压缩包，请解压到一个合适的目录。
-	\item 打开命令行工具，进入Protobuf源代码目录。
-	\item 使用CMake生成构建文件，例如运行命令：\texttt{cmake -G "Visual Studio 17 2022" ..}（根据实际情况调整生成器）。
-	\item 使用Visual Studio或MSBuild编译生成的解决方案或项目文件。
-	\item 编译完成后，将生成的库和头文件放置到适当的位置，以便后续使用。
-\end{enumerate}
-
 \subsection{安装Vulkan SDK}
+
+本程序使用了Vulkan进行GPU加速，因此必须安装Vulkan SDK。
 
 \begin{enumerate}
 	\item 前往Vulkan SDK的下载页面（\url{https://vulkan.lunarg.com/sdk/home}）下载适用于Windows的最新版Vulkan SDK安装程序。
@@ -215,35 +197,178 @@ ONNX（Open Neural Network Exchange）是一种用于表示深度学习模型的
 
 \subsection{编译OpenCV}
 
+我手动编译5.x分支并不只是为了尝鲜5.0.0版本，还一个用途就是编译静态库版本可执行程序文件。
+
+编译步骤如下：
+
 \begin{enumerate}
-	\item 前往OpenCV的GitHub仓库（\url{https://github.com/opencv/opencv}）和opencv\_contrib仓库（\url{https://github.com/opencv/opencv_contrib}）克隆源代码。
+	\item 前往OpenCV的GitHub仓库（\url{https://github.com/opencv/opencv}）并克隆"5.x"分支到本地
 	\item 创建一个构建目录，并在命令行工具中进入该目录。
-	\item 使用CMake配置OpenCV的构建，指定源代码路径、构建路径和opencv\_contrib模块的路径。
-	\item 根据需要配置其他CMake选项，例如启用或禁用特定的功能模块、指定编译器等。
+	\item 使用CMake GUI配置OpenCV的构建。
+	\item 取消DNN、Java、Python、Protobuf相关用不到的功能选项以加快编译速度。
+	\item 根据需要配置"BUILD\_SHARED\_LIBS"用于配置是否构建静态库版本。
 	\item 使用Visual Studio或MSBuild编译生成的解决方案或项目文件。这可能需要一些时间，具体取决于您的计算机性能和配置选项。
 	\item 编译完成后，您可以选择安装OpenCV库和头文件到系统目录，或者将它们复制到您的项目目录中以便使用。确保在您的项目中正确配置库路径和头文件路径。
 \end{enumerate}
 
 \section{CAS\_OCR.cpp}
 
+\subsection{介绍}
+
+"CAS\_OCR.cpp"文件为本项目的核心代码，无论是MSVC版本还是.Net版本还是Qt这种计算机上的版本甚至Android版本都使用到了这个程序，因此我在这个源代码中实现了许多的宏定义用于适配不同的编译器环境以及操作系统。
+
+具体代码请参考\url{Deploy/SHMTU_CAS_OCR_Demo_Windows/VC/NCNN_CLI/CAS_OCR.cpp}。
+
+\subsection{每个函数的功能}
+
+下面为每个函数的功能介绍：
+
+\begin{itemize}
+	\item \texttt{split\_img\_by\_ratio}: 根据给定的比例裁剪图像。
+	\item \texttt{path\_check\_windows\_style}: 检查路径是否符合 Windows 风格。
+	\item \texttt{path\_ensure\_slash}: 确保路径以斜杠结尾。
+	\item \texttt{init\_model\_for\_net}: 初始化指定模型的网络。
+	\item \texttt{init\_model}: 初始化模型。
+	\item \texttt{predict\_by\_model}: 使用模型进行预测。
+	\item \texttt{get\_operator\_type\_by\_int}: 根据整数值获取运算符类型（int转换为枚举类）。
+	\item \texttt{get\_operator\_str\_by\_int}: 根据整数值获取运算符字符串表示。
+	\item \texttt{calculate\_operator}: 执行运算操作。
+	\item \texttt{predict\_validate\_code}: 预测并验证码。
+	\item \texttt{release\_model}: 释放模型资源。
+	\item \texttt{is\_model\_init}: 检查模型是否已初始化。
+	\item \texttt{set\_model\_opt\_gpu}: 设置模型在 GPU 上的选项。
+	\item \texttt{set\_model\_gpu\_support}: 设置模型是否支持 GPU。
+	\item \texttt{NCNN\_Device\_Info}: 表示 NCNN 设备信息的类。
+	\item \texttt{print\_device\_info}: 打印设备信息。
+	\item \texttt{get\_gpu\_count}: 获取 GPU 数量。
+	\item \texttt{is\_support\_vulkan}: 检查是否支持 Vulkan。
+	\item \texttt{get\_default\_gpu\_index}: 获取默认 GPU 索引。
+	\item \texttt{get\_gpu\_info}: 获取指定 GPU 的信息。
+	\item \texttt{get\_all\_gpu\_info}: 获取所有 GPU 的信息。
+\end{itemize}
+
 \section{CAS\_OCR API的使用}
+
+使用CAS\_OCR API主要分为以下几个步骤：
+\begin{enumerate}
+	\item 设置工作设备(\texttt{set\_model\_gpu\_support})
+	\item 初始化模型(\texttt{init\_model})
+	\item 进行预测(\texttt{predict\_validate\_code})
+	\item 释放模型(\texttt{release\_model})
+\end{enumerate}
+
+其中，\texttt{predict\_validate\_code}函数传递的为cv::Mat，
+因此需要先将图像使用OpenCV导入或首先转换为OpenCV的cv::Mat格式。
+
+\section{基于Windows API的Windows GUI程序设计}
+
+使用Microsoft Visual C++ 与 Windows API进行Windows GUI程序开发是微软早期主推的Windows图形界面开发解决方案。其灵活性极强，兼容性极佳广受诸多软件公司的青睐，QQ就是使用MSVC进行开发，虽然QQ目前已经开发了基于Electron的跨平台客户端，但是仅仅在Linux与macOS进行了推广，Windows版本依旧为内测状态。
+
+\subsection{按钮与菜单事件响应}
+
+Windows窗口响应按钮的点击事件以及菜单的点击事件主要通过消息机制。
+通过回调函数"LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)"，其中的"message"参数为接收到的消息类型，"wParam"参数为消息的参数，类型为DWORD双字。
+
+\begin{enumerate}
+	\item 我们首先对"WM\_CREATE"进行判断，判断消息类型，如果消息类型为"WM\_COMMAND"则执行下一步判断。
+	\item 通过"HIWORD"函数判断"wParam"的高字是否为"BN\_CLICKED"，如果命中则进行下一步判断
+	\item 通过"LOWORD"函数判断"wParam"的低字是否为按钮对应ID，用于分辨是哪一个按钮触发了onClick事件。
+\end{enumerate}
+
+通过上述逻辑进行按钮按下消息的响应。
+
+\subsection{利用Windows Internet API发送网络请求}
+
+"SHMTU\_CAS\_URL.cpp"实现了从指定 URL 获取验证码图像的功能。具体步骤如下：
+
+导入必要的头文件：包括 "framework.h" 和 <wininet.h>这两个均为Windows API，其中framework为VS创建工程自动生成的，其中包含了多个Windows API的头文件，能通过一个头文件一次性导入。
+
+链接 WinINet 库：使用 \#pragma comment(lib, "wininet.lib") 指令将 WinINet 库链接到项目中。
+
+定义 "{get\_captcha\_by\_url}" 函数：
+
+\begin{enumerate}
+	\item 函数返回一个 cv::Mat 类型的图像，表示从 URL 获取的验证码图像。
+	\item 函数首先指定了验证码图像的 URL。
+	\item 使用 InternetOpen 打开一个 Internet 连接。
+	\item 使用 InternetOpenUrlA 打开指定的 URL。
+	\item 通过循环读取从 URL 返回的数据，并存储到缓冲区中，直到读取完毕。
+	\item 使用 cv::imdecode 将读取的图像数据解码为 OpenCV 的 cv::Mat 类型图像。
+	\item 最后关闭相关的 Internet 句柄。
+\end{enumerate}
+
+调试输出（仅在调试模式下）：如果在调试模式下，将输出图像的宽度、高度和通道数。
+
+总体而言，这段代码实现了通过 WinINet 库从指定 URL 获取验证码图像的功能，并将其转换为 OpenCV 中的 cv::Mat 类型。
+
+\subsection{高分辨率屏幕(高分屏)适配}
+
+如今高分屏的价格已经不是多年以前的遥不可及，因此越来越多的人选购高分屏，
+此外目前市场上的笔记本均配备高分屏，因此很有必要适配高分屏，让用户获得良好的使用体验。
+
+我通过“\#define ADAPT\_HIGH\_DPI 1”这个宏定义用于控制是否开启DPI适配。
+
+\begin{lstlisting}[caption={DPI缩放},language=C++,label=code:vc_dpi]
+	#if ADAPT_HIGH_DPI
+	// 告知系统应用程序是 DPI 感知的
+	SetProcessDPIAware();
+	#endif
+
+	// 获取设备的 DPI
+	const HDC screen = GetDC(nullptr);
+	const int dpiX =
+	GetDeviceCaps(screen, LOGPIXELSX);
+	ReleaseDC(nullptr, screen);
+	#if ADAPT_HIGH_DPI
+	dpi_ratio = static_cast<float>(dpiX) / static_cast<float>(USER_DEFAULT_SCREEN_DPI);
+	#endif
+\end{lstlisting}
+
+代码请参考\ref{code:vc_dpi}，适配步骤如下：
+
+\begin{enumerate}
+	\item 告知系统应用程序是 DPI 感知的
+	\item 获取设备的 DPI 缩放比例
+	\item 根据 DPI 缩放比例计算窗口以及每个控件的位置及大小
+\end{enumerate}
+
+效果对比见图\ref{fig:dpilow}与\ref{fig:dpihigh}，前者为未适配高DPI，后者为已经适配。
+可以观察到未适配版本的标题栏与窗口内部的控件字体显示效果有明显差异，用户体验并不好。
+但是适配后每一部分都会非常清晰，因此用户体验极佳。
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{Resources/Picture/dpi_low}
+	\caption{4K屏下未适配高DPI}
+	\label{fig:dpilow}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{Resources/Picture/dpi_high}
+	\caption{4K屏下已适配DPI}
+	\label{fig:dpihigh}
+\end{figure}
 
 \section{运行截图}
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.7\linewidth]{Resources/Picture/vc_main}
+	\includegraphics[width=0.9\linewidth]{Resources/Picture/vc_cli}
+	\caption{VC CLI}
+	\label{fig:vccli}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{Resources/Picture/vc_main}
 	\caption{VC WinMain}
 	\label{fig:vcmain}
 \end{figure}
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.7\linewidth]{Resources/Picture/vc_main_memory}
-	\caption{VC GUI 内存使用(加载模型后)}
-	\label{fig:vcmainmemory}
+	\includegraphics[width=0.9\linewidth]{Resources/Picture/msvc-win7}
+	\caption{Windows 7的运行截图}
+	\label{fig:msvc-win7}
 \end{figure}
-
-\section{内存占用分析}
-
-

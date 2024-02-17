@@ -1,6 +1,50 @@
 \chapter{总结与展望}
 \label{chapter:12}
 
+\section{内存占用分析}
+
+\begin{table}[!ht]
+	\centering
+	\caption{MSVC内存占用}
+	\begin{tabular}{cc}
+		\hline
+		MSVC & 内存占用(MB) \\ \hline
+		程序运行 & 22.3 \\
+		CPU加载模型 & 716.3 \\
+		GPU加载模型 & 82.5 \\
+		GPU加载模型的峰值 & 334.5 \\ \hline
+	\end{tabular}
+	\label{memory_msvc}
+\end{table}
+
+\begin{table}[!ht]
+	\centering
+	\caption{.Net WPF内存占用}
+	\begin{tabular}{cc}
+		\hline
+		.Net WPF & 内存占用(MB) \\ \hline
+		程序运行 & 74.5 \\
+		CPU加载模型 & 778.6 \\
+		GPU加载模型 & 151.5 \\
+		GPU加载模型的峰值 & 415.3 \\ \hline
+	\end{tabular}
+	\label{memory_dotnet}
+\end{table}
+
+\begin{table}[!ht]
+	\centering
+	\caption{Qt Windows内存占用}
+	\begin{tabular}{cc}
+		\hline
+		Qt & 内存占用(MB) \\ \hline
+		程序运行 & 26.1 \\
+		CPU加载模型 & 722.2 \\
+		GPU加载模型 & 89.2 \\
+		GPU加载模型的峰值 & 574.3 \\ \hline
+	\end{tabular}
+	\label{memory_qt_windows}
+\end{table}
+
 \section{总结}
 
 \section{展望}

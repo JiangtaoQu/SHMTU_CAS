@@ -3,13 +3,40 @@
 
 \section{介绍}
 
+因为无论是MSVC还是.Net均为Windows下的技术栈，无法部署到其他平台，因此我决定开发一个跨平台的方案，因此我选择了Qt这个成熟的跨平台方案。
+
 \section{Windows下进行开发}
+
+\subsection{开发环境}
+
+使用官方编译的Qt6.6.2(2024年2月15日发布)版本，因为官方编译的为动态库版本，因此我没有重新从src编译静态库版本，因此最终Qt程序并没有静态库版本。
+
+\subsection{Qt与MSVC版本代码的区别}
+
+Qt程序与MSVC主要区别在于，Qt使用QPixmap，因此只需要将QPixmap转换为cv::Mat即可，此外Qt使用信号槽机制来进行事件回调，不同于VC的消息机制，以及.Net直接绑定响应事件。
+
+QPixmap与cv::Mat的转换请参考\url{Deploy/QT/SHMTU_CAS_OCR_Demo_QT/QtOpenCV.cpp}。
+
+此外我在"CAS\_OCR\_QT.cpp"文件中重载了"predict\_validate\_code"函数，将第一个参数变为QPixmap类型。
+这样就可以方便地在Qt中直接调用MSVC已经完成的C++接口。
+
+\subsection{界面展示}
 
 \section{适配macOS}
 
 \subsection{开发环境}
 
+\begin{itemize}
+	\item XCode
+	\item Apple LLVM Clang
+	\item Qt 6.6.2
+\end{itemize}
+
 \subsection{生成macOS的icns文件}
+
+\subsection{打包CheckPoint}
+
+\subsection{界面展示}
 
 \section{适配Linux}
 

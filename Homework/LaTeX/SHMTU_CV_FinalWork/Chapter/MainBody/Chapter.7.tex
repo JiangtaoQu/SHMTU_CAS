@@ -1,8 +1,33 @@
 \chapter{Python 推理}
 \label{chapter:7}
 
+在Python中进行深度学习模型的推理是一个重要的环节，它涉及到将训练好的模型应用于实际数据以获取预测结果。本章节将详细介绍使用不同工具和框架进行模型推理的方法。
+
 \section{PyTorch直接推理}
+
+PyTorch作为一个流行的深度学习框架，提供了方便的工具来进行模型的推理。通过调用model.eval()方法，我们可以将模型设置为评估模式，此时模型的参数将不再更新，适用于进行推理测试。在评估模式下，我们可以利用训练好的模型对新的数据进行预测，并获取相应的输出结果。
+
+具体代码请参考\url{Train/SHMTU_CAS_OCR_RESNET/src/classify/predict/predict_file.py}。
 
 \section{ONNX Runtime}
 
+ONNX（Open Neural Network Exchange）是一种开放的深度学习模型表示格式，得到了众多深度学习框架的支持。通过将模型导出为ONNX格式，我们可以利用ONNX Runtime在不同平台和设备上进行模型的推理。ONNX Runtime是一个高效的推理引擎，支持多种硬件加速，包括CPU、GPU和专用加速器等。通过使用ONNX Runtime，我们可以方便地在不同环境中部署和推理模型。
+
+具体的ONNX Runtime推理代码可以参考位于\url{Train/SHMTU_CAS_OCR_RESNET/src/classify/digit/infer_onnx.py}路径下的代码文件。
+
 \section{Intel OpenVINO}
+
+考虑到大部分PC和服务器使用的是Intel处理器，而且Intel还提供了神经计算棒等外接设备，可以方便地扩展嵌入式设备如树莓派的深度网络推理能力，我们选择使用Intel OpenVINO工具套件进行推理。OpenVINO是Intel推出的一个优化推理性能的开源工具，可以充分利用Intel硬件的优势，提供高效的推理性能。
+
+在市场上，二手Intel神经计算棒的价格相对较低，这使得开发者可以轻松地获取到这些设备进行开发和测试。图\ref{fig:intelstick}展示了Intel神经计算棒的外观。
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.5\linewidth]{Resources/Picture/intel_stick}
+	\caption{Intel神经计算棒}
+	\label{fig:intelstick}
+\end{figure}
+
+具体使用Intel OpenVINO进行推理的代码可以参考\url{Train/SHMTU_CAS_OCR_RESNET/src/classify/digit/openvino_test.py}路径下的代码文件。通过这些代码，我们可以了解如何加载模型、设置输入数据以及执行推理等关键步骤。
+
+我们选择Python进行原型设计，但是OpenVINO也提供了C++ API，在将来我们也可以很方便地将程序改写为C++以提升运行效率。

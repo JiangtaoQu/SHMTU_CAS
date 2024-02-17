@@ -1,7 +1,15 @@
 \chapter{Microsoft Windows .Net 平台的部署及混合编译的探究}
 \label{chapter:9dotnet}
 
+\section{背景}
 
+\section{解决方案}
+
+\subsection{Microsoft ML Nuget包}
+
+没有opencv
+
+\subsection{通过CLR调用C++}
 
 \section{工作流程}
 
@@ -15,7 +23,9 @@
 
 \section{CLR程序设计}
 
+\subsection{CLR静态库}
 
+我们无法将CLR的动态库编译为静态库，Visual C++编译器报错提示"/clr"与"/mt"两个参数不可以同时使用，而后者为编译动态库的参数，因此只能使用"/MDd"参数编译动态链接库。因此.Net C\#客户端并没有静态库版本。
 
 \section{CLR Connector程序设计}
 
