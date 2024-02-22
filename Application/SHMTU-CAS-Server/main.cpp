@@ -7,8 +7,27 @@
 
 #include <iostream>
 #include <thread>
+#include <opencv2/imgproc.hpp>
 
 #include "CAS_OCR.h"
+
+bool decode_image(const std::string &image_data, cv::Mat &image) {
+    try {
+        const std::vector<uchar> data(image_data.begin(), image_data.end());
+        image = cv::imdecode(data, cv::IMREAD_COLOR);
+        cv::resize(image, image, cv::Size(400, 140));
+    } catch (cv::Exception &ex) {
+        std::cerr << "Error decoding image: " << ex.what() << std::endl;
+        return false;
+    }
+
+    if (image.empty()) {
+        std::cerr << "Error decoding image" << std::endl;
+        return false;
+    }
+
+    return true;
+}
 
 void handle_client(Poco::Net::StreamSocket client, const std::string &peerAddress) {
     const std::string end_marker = "<END>";
@@ -48,17 +67,7 @@ void handle_client(Poco::Net::StreamSocket client, const std::string &peerAddres
     std::cout << "[" << peerAddress << "] Received image data" << std::endl;
 
     cv::Mat image;
-    try {
-        std::vector<uchar> data(image_data.begin(), image_data.end());
-        image = cv::imdecode(data, cv::IMREAD_COLOR);
-    } catch (cv::Exception &ex) {
-        std::cerr << "[" << peerAddress << "] Error decoding image: " <<
-                ex.what()
-                << std::endl;
-        return;
-    }
-
-    if (image.empty()) {
+    if (!decode_image(image_data, image)) {
         std::cerr << "[" << peerAddress << "] Error decoding image" << std::endl;
         return;
     }
@@ -68,8 +77,11 @@ void handle_client(Poco::Net::StreamSocket client, const std::string &peerAddres
             << std::endl;
 
     // Add image processing and prediction logic here
+    const auto predict_result =
+            CAS_OCR::predict_validate_code(image, false);
 
-    std::string result = "Prediction result";
+    const std::string result =
+            std::get<1>(predict_result);
     try {
         client.sendBytes(
             result.c_str(),
@@ -85,6 +97,16 @@ void handle_client(Poco::Net::StreamSocket client, const std::string &peerAddres
 }
 
 [[noreturn]] int main() {
+    if (!CAS_OCR::init_model(
+            "../../Checkpoint",
+            "fp32")
+    ) {
+        std::cerr << "Error initializing model" << std::endl;
+        return -1;
+    }
+
+    std::cout << "Load Model Success" << std::endl;
+
     Poco::Net::ServerSocket srv(21601);
 
     std::cout << "Server started, listening on port 21601" << std::endl;
