@@ -39,7 +39,7 @@ input_image = np.transpose(input_image, (2, 0, 1))  # 调整通道顺序，从 H
 input_image = np.expand_dims(input_image, axis=0)  # 添加批量维度
 
 # 执行推理
-output = exec_net.infer(inputs={'input.1': input_image})
+output = exec_net.infer(inputs={'input': input_image})
 
 print("推理结果:", output)
 
