@@ -1,4 +1,5 @@
 import socket
+import threading
 
 from predict_file import *
 
@@ -34,21 +35,10 @@ def handle_pic(image_byte_data: bytes) -> str:
     return expr
 
 
-# 创建TCP/IP套接字
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-# 监听端口
-server_socket.bind(('0.0.0.0', 21601))
-server_socket.listen(1)
-
-print("等待连接...")
-
-end_marker = "<END>".encode("utf-8")
-
-while True:
-    # 等待客户端连接
-    client_socket, client_address = server_socket.accept()
+def handle_client(client_socket, client_address):
     print(f"连接来自: {client_address}")
+
+    end_marker = "<END>".encode("utf-8")
 
     # 接收图像数据
     image_data = b""
@@ -70,15 +60,17 @@ while True:
             break
 
     if receive_error:
-        print("接收数据错误！")
-        continue
-    print("Received!")
+        print(f"[{client_address}]接收数据错误！")
+        return
+
+    print(f"[{client_address}]Received!")
 
     result: str
+
     try:
         result = handle_pic(image_data)
     except:
-        print("处理图像错误！")
+        print(f"[{client_address}]处理图像错误！")
         result = ""
 
     print(result)
@@ -88,8 +80,34 @@ while True:
             result.encode(encoding="utf-8")
         )
     except:
-        print("结果发送错误！")
+        print(f"[{client_address}]结果发送错误！")
 
     # 关闭连接
     client_socket.close()
-    print("连接已关闭")
+    print(f"[{client_address}]连接已关闭")
+
+
+def start_server():
+    # 创建TCP/IP套接字
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    # 监听端口
+    server_socket.bind(('0.0.0.0', 21601))
+    server_socket.listen(5)
+
+    print("等待连接...")
+
+    while True:
+        # 等待客户端连接
+        client_socket, client_address = server_socket.accept()
+
+        # 创建新的线程来处理连接
+        client_thread = threading.Thread(
+            target=handle_client,
+            args=(client_socket, client_address)
+        )
+        client_thread.start()
+
+
+if __name__ == "__main__":
+    start_server()

@@ -117,6 +117,31 @@ class Captcha {
             }
         }
 
+        fun ocrByRemoteTcpServerAutoRetry(
+            host: String, port: Int,
+            imageData: ByteArray,
+            retryTimes: Int = 3
+        ): String {
+            var result: String = ""
+
+            for (i in 1..retryTimes) {
+
+                try {
+                    result = ocrByRemoteTcpServer(host, port, imageData)
+                } catch (e: Exception) {
+                    println("第${i + 1}次尝试远程识别验证码失败")
+                    println("错误信息：${e.message}")
+                    continue
+                }
+
+                if (result.isNotEmpty()) {
+                    break
+                }
+            }
+
+            return result
+        }
+
         fun getExprResultByExprString(expr: String): String {
             val index = expr.indexOf("=")
             if (index != -1) {
@@ -155,28 +180,11 @@ class Captcha {
                 return
             }
 
-            var validateCode = ""
-            var times = 0
-
-            while (validateCode.isEmpty()) {
-                if (times > 3) {
-                    println("验证码识别失败")
-                    println("总共尝试次数：$times")
-                    return
-                }
-
-                times++
-
-                try {
-                    validateCode =
-                        ocrByRemoteTcpServer(
-                            "127.0.0.1", 21601,
-                            imageData
-                        )
-                } catch (e: Exception) {
-                    println("错误信息：${e.message}")
-                }
-            }
+            val validateCode =
+                ocrByRemoteTcpServerAutoRetry(
+                    "127.0.0.1", 21601,
+                    imageData
+                )
 
             val exprResult =
                 getExprResultByExprString(validateCode)
