@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.22)
 project(SHMTU_CAS_Server)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(OpenCV_DIR "./3rdparty/OpenCV/opencv500-vs2022/install")
 set(Poco_DIR "./3rdparty/Poco/poco-poco-1.13.2-build/install/cmake")
@@ -20,7 +21,17 @@ set(SOURCES
         CAS_OCR.h
 )
 
-add_executable(SHMTU_CAS_Server ${SOURCES})
+# Set Icon
+if (WIN32)
+    set(WINDOWS_ICON_RC_FILE "app_win32.rc")
+endif ()
+
+add_executable(SHMTU_CAS_Server
+        ${SOURCES}
+
+        # Windows Icon
+        ${WINDOWS_ICON_RC_FILE}
+)
 
 target_link_libraries(SHMTU_CAS_Server ${OpenCV_LIBS})
 target_link_libraries(SHMTU_CAS_Server ${Poco_LIBRARIES})

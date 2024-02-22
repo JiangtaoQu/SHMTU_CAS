@@ -1,13 +1,13 @@
-#include "Poco/Net/ServerSocket.h"
-#include "Poco/Net/StreamSocket.h"
-#include "Poco/Net/SocketAddress.h"
-#include "Poco/StreamCopier.h"
-
-#include <opencv2/imgcodecs/imgcodecs.hpp>
-
 #include <iostream>
 #include <thread>
+
+#include <Poco/Net/ServerSocket.h>
+#include <Poco/Net/StreamSocket.h>
+#include <Poco/Net/SocketAddress.h>
+#include <Poco/StreamCopier.h>
+
 #include <opencv2/imgproc.hpp>
+#include <opencv2/imgcodecs/imgcodecs.hpp>
 
 #include "CAS_OCR.h"
 
@@ -98,7 +98,16 @@ void handle_client(Poco::Net::StreamSocket client, const std::string &peerAddres
     std::cout << "[" << peerAddress << "] Connection closed" << std::endl;
 }
 
+void print_hello() {
+    std::cout << "ShangHai Maritime Uninversity CAS OCR" << "\n";
+    std::cout << "Author:Haomin Kong" << "\n";
+    std::cout << "Date:2024/2/22" << "\n";
+    std::cout << std::endl;
+}
+
 [[noreturn]] int main() {
+    print_hello();
+
     if (!CAS_OCR::init_model(
             "../../Checkpoint",
             "fp32")
