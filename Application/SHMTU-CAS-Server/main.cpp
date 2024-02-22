@@ -156,16 +156,20 @@ int command_line(int argc, char *argv[]) {
         false, port,
         "port_number"
     );
+    std::ostringstream oss_gpu;
+    oss_gpu << "Use GPU (default is "
+            << (use_gpu ? "true" : "false")
+            << ")";
     TCLAP::SwitchArg gpuArg(
         "g", "gpu",
-        "Use GPU (default is true)",
+        oss_gpu.str(),
         use_gpu
     );
     TCLAP::ValueArg<std::string> checkpointArg(
         "c", "checkpoint",
         "Checkpoint directory path",
         false, checkpoint_path,
-        "STRING"
+        "Directory Path"
     );
 
     TCLAP::CmdLine cmd("SHMTU CAS OCR Server", ' ', "1.0");
