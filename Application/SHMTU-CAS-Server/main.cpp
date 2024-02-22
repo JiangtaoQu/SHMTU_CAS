@@ -19,6 +19,7 @@ int port = 21601;
 bool use_gpu = false;
 std::string checkpoint_path =
         "../../Checkpoint";
+bool use_fp16 = false;
 
 // Global variable to indicate whether to exit the program
 volatile sig_atomic_t g_running = true;
@@ -29,6 +30,13 @@ void signal_handler(int signal) {
         std::cout << "Received SIGINT signal. Exiting..." << std::endl;
         g_running = false; // Set the exit flag to false
     }
+}
+
+std::string convert_bool_to_std_string(const bool value) {
+    if (value) {
+        return "true";
+    }
+    return "false";
 }
 
 bool decode_image(const std::string &image_data, cv::Mat &image) {
@@ -150,12 +158,14 @@ void print_hello() {
 }
 
 int command_line(int argc, char *argv[]) {
+    // Define command line arguments
     TCLAP::ValueArg<int> portArg(
         "p", "port",
         "The port number to use",
         false, port,
         "port_number"
     );
+
     std::ostringstream oss_gpu;
     oss_gpu << "Use GPU (default is "
             << (use_gpu ? "true" : "false")
@@ -165,6 +175,7 @@ int command_line(int argc, char *argv[]) {
         oss_gpu.str(),
         use_gpu
     );
+
     TCLAP::ValueArg<std::string> checkpointArg(
         "c", "checkpoint",
         "Checkpoint directory path",
@@ -172,11 +183,23 @@ int command_line(int argc, char *argv[]) {
         "Directory Path"
     );
 
+    std::string desc_fp16 = "Use FP16 Model (default is ";
+    desc_fp16 += convert_bool_to_std_string(use_fp16);
+    desc_fp16 += ")";
+    TCLAP::SwitchArg fp16Arg(
+        "f", "fp16",
+        desc_fp16,
+        use_fp16
+    );
+
+    // Add to CmdLine
     TCLAP::CmdLine cmd("SHMTU CAS OCR Server", ' ', "1.0");
     cmd.add(portArg);
     cmd.add(gpuArg);
     cmd.add(checkpointArg);
+    cmd.add(fp16Arg);
 
+    // Try to parse the command line arguments
     try {
         cmd.parse(argc, argv);
     } catch (TCLAP::ArgException &e) {
@@ -184,16 +207,19 @@ int command_line(int argc, char *argv[]) {
         return 1;
     }
 
+    // Get the value parsed by each arg.
     const int command_line_port = portArg.getValue();
     const bool command_line_use_gpu = gpuArg.getValue();
     const std::string command_line_checkpoint =
             checkpointArg.getValue();
 
+    // Set global variables
     port = command_line_port;
     use_gpu = command_line_use_gpu;
     checkpoint_path = command_line_checkpoint;
+    use_fp16 = fp16Arg.getValue();
 
-
+    // Print command line arguments values
     std::cout << "Command Line Arguments:" << std::endl;
     std::cout << "Port: " << command_line_port << std::endl;
     std::cout << "Use GPU: "
@@ -201,6 +227,9 @@ int command_line(int argc, char *argv[]) {
             << std::endl;
     std::cout << "Checkpoint Path: \n\t"
             << command_line_checkpoint
+            << std::endl;
+    std::cout << "Use FP16: "
+            << (use_fp16 ? "true" : "false")
             << std::endl;
     std::cout << std::endl;
 
@@ -226,7 +255,7 @@ int command_line(int argc, char *argv[]) {
     if (
         !CAS_OCR::init_model(
             checkpoint_path,
-            "fp32"
+            (use_fp16 ? "fp16" : "fp32")
         )
     ) {
         std::cerr << "Error initializing model" << std::endl;
