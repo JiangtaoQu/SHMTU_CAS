@@ -91,8 +91,8 @@ class Captcha {
             imageData: ByteArray
         ): String {
             Socket(host, port).use { socket ->
-                // 设置超时时间为 1 秒
-                socket.setSoTimeout(5000)
+                // 设置超时时间为 5 秒
+                // socket.setSoTimeout(5000)
 
                 val outputStream = socket.getOutputStream()
                 val dataOutputStream = DataOutputStream(outputStream)
@@ -159,12 +159,13 @@ class Captcha {
             var times = 0
 
             while (validateCode.isEmpty()) {
-                times++
                 if (times > 3) {
                     println("验证码识别失败")
                     println("总共尝试次数：$times")
                     return
                 }
+
+                times++
 
                 try {
                     validateCode =

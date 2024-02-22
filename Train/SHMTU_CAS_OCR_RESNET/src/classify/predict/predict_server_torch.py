@@ -43,6 +43,8 @@ server_socket.listen(1)
 
 print("等待连接...")
 
+end_marker = "<END>".encode("utf-8")
+
 while True:
     # 等待客户端连接
     client_socket, client_address = server_socket.accept()
@@ -57,18 +59,27 @@ while True:
         except:
             receive_error = True
             break
-        if data == b"<END>":  # 检查是否收到特殊标记
-            break
+
         if not data:
             break
+
         image_data += data
+
+        if image_data.endswith(end_marker):  # 检查是否收到特殊标记
+            image_data = image_data[:-len(end_marker)]
+            break
 
     if receive_error:
         print("接收数据错误！")
         continue
     print("Received!")
 
-    result: str = handle_pic(image_data)
+    result: str
+    try:
+        result = handle_pic(image_data)
+    except:
+        print("处理图像错误！")
+        result = ""
 
     print(result)
 
