@@ -82,11 +82,13 @@ void handle_client(Poco::Net::StreamSocket client, const std::string &peerAddres
 
     const std::string result =
             std::get<1>(predict_result);
+    std::cout << "[" << peerAddress << "] " << result << std::endl;
     try {
         client.sendBytes(
             result.c_str(),
             static_cast<int>(result.length())
         );
+        std::cout << "[" << peerAddress << "] " << "Send Successed!" << std::endl;
     } catch (Poco::Exception &ex) {
         std::cerr << "[" << peerAddress << "] Error sending result: " << ex.displayText() <<
                 std::endl;

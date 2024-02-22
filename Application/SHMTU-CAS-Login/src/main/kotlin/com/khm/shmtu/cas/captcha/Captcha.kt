@@ -194,6 +194,21 @@ class Captcha {
             saveImageToFile(imageData)
         }
 
+        fun testLocalTcpServerOcrMultiThread(times: Int = 10) {
+            val threads = List(times) {
+                Thread {
+                    testLocalTcpServerOcr()
+                }
+            }
+
+            threads.forEach { it.start() } // 启动所有线程
+
+            // 等待所有线程执行完毕
+            threads.forEach { it.join() }
+
+            println("All threads have finished execution.")
+        }
+
     }
 
 }

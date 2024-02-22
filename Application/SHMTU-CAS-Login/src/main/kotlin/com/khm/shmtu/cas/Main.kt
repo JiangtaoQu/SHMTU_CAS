@@ -13,5 +13,5 @@ fun main() {
 //    println(hotWaterResult.first)
 //    println(hotWaterResult.second)
 
-    Captcha.testLocalTcpServerOcr()
+    Captcha.testLocalTcpServerOcrMultiThread()
 }
