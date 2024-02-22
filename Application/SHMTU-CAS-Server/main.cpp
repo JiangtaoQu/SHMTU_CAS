@@ -1,3 +1,8 @@
+// SHMTU CAS OCR Server
+// Created by Haomin Kong on 2024/2/22.
+// Python Version:
+// Train/SHMTU_CAS_OCR_RESNET/src/classify/predict/predict_server_torch.py
+
 #include <iostream>
 #include <thread>
 #include <csignal>
@@ -151,7 +156,8 @@ void monitor_in(Poco::Net::ServerSocket &srv) {
 }
 
 void print_hello() {
-    std::cout << "ShangHai Maritime Uninversity CAS OCR" << "\n";
+    std::cout << "ShangHai Maritime Uninversity" << "\n";
+    std::cout << "SHMTU CAS OCR Server" << "\n";
     std::cout << "Author:Haomin Kong" << "\n";
     std::cout << "Date:2024/2/22" << "\n";
     std::cout << std::endl;
@@ -236,7 +242,7 @@ int command_line(int argc, char *argv[]) {
     return 0;
 }
 
-[[noreturn]] int main(int argc, char *argv[]) {
+[[noreturn]] int main(const int argc, char *argv[]) {
     // Set up signal handling
     std::signal(SIGINT, signal_handler);
 
