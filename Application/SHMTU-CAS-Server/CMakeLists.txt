@@ -14,6 +14,10 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 find_package(Poco REQUIRED COMPONENTS Foundation Net)
 find_package(ncnn REQUIRED)
 
+include_directories(
+        ${PROJECT_SOURCE_DIR}/3rdparty/Tclap/tclap-1.4.0-rc1/include
+)
+
 set(SOURCES
         main.cpp
 

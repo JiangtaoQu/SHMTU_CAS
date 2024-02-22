@@ -1,5 +1,8 @@
 #include <iostream>
 #include <thread>
+#include <csignal>
+
+#include <tclap/CmdLine.h>
 
 #include <Poco/Net/ServerSocket.h>
 #include <Poco/Net/StreamSocket.h>
@@ -10,6 +13,23 @@
 #include <opencv2/imgcodecs/imgcodecs.hpp>
 
 #include "CAS_OCR.h"
+
+// Define global variable
+int port = 21601;
+bool use_gpu = false;
+std::string checkpoint_path =
+        "../../Checkpoint";
+
+// Global variable to indicate whether to exit the program
+volatile sig_atomic_t g_running = true;
+
+// Signal handler function
+void signal_handler(int signal) {
+    if (signal == SIGINT) {
+        std::cout << "Received SIGINT signal. Exiting..." << std::endl;
+        g_running = false; // Set the exit flag to false
+    }
+}
 
 bool decode_image(const std::string &image_data, cv::Mat &image) {
     try {
@@ -78,7 +98,7 @@ void handle_client(Poco::Net::StreamSocket client, const std::string &peerAddres
 
     // Add image processing and prediction logic here
     const auto predict_result =
-            CAS_OCR::predict_validate_code(image, false);
+            CAS_OCR::predict_validate_code(image, use_gpu);
 
     const std::string result =
             std::get<1>(predict_result);
@@ -98,33 +118,18 @@ void handle_client(Poco::Net::StreamSocket client, const std::string &peerAddres
     std::cout << "[" << peerAddress << "] Connection closed" << std::endl;
 }
 
-void print_hello() {
-    std::cout << "ShangHai Maritime Uninversity CAS OCR" << "\n";
-    std::cout << "Author:Haomin Kong" << "\n";
-    std::cout << "Date:2024/2/22" << "\n";
-    std::cout << std::endl;
-}
+void monitor_in(Poco::Net::ServerSocket &srv) {
+    while (g_running) {
+        Poco::Net::StreamSocket client;
+        try {
+            client = srv.acceptConnection();
+        } catch (...) {
+            continue;
+        }
 
-[[noreturn]] int main() {
-    print_hello();
-
-    if (!CAS_OCR::init_model(
-            "../../Checkpoint",
-            "fp32")
-    ) {
-        std::cerr << "Error initializing model" << std::endl;
-        return -1;
-    }
-
-    std::cout << "Load Model Success" << std::endl;
-
-    Poco::Net::ServerSocket srv(21601);
-
-    std::cout << "Server started, listening on port 21601" << std::endl;
-
-    while (true) {
-        Poco::Net::StreamSocket client =
-                srv.acceptConnection();
+        if (!g_running) {
+            break;
+        }
 
         const std::string peerAddress =
                 client.peerAddress().toString();
@@ -135,6 +140,127 @@ void print_hello() {
         // Detach the thread to execute independently in the background
         client_thread.detach();
     }
+}
+
+void print_hello() {
+    std::cout << "ShangHai Maritime Uninversity CAS OCR" << "\n";
+    std::cout << "Author:Haomin Kong" << "\n";
+    std::cout << "Date:2024/2/22" << "\n";
+    std::cout << std::endl;
+}
+
+int command_line(int argc, char *argv[]) {
+    TCLAP::ValueArg<int> portArg(
+        "p", "port",
+        "The port number to use",
+        false, port,
+        "port_number"
+    );
+    TCLAP::SwitchArg gpuArg(
+        "g", "gpu",
+        "Use GPU (default is true)",
+        use_gpu
+    );
+    TCLAP::ValueArg<std::string> checkpointArg(
+        "c", "checkpoint",
+        "Checkpoint directory path",
+        false, checkpoint_path,
+        "STRING"
+    );
+
+    TCLAP::CmdLine cmd("SHMTU CAS OCR Server", ' ', "1.0");
+    cmd.add(portArg);
+    cmd.add(gpuArg);
+    cmd.add(checkpointArg);
+
+    try {
+        cmd.parse(argc, argv);
+    } catch (TCLAP::ArgException &e) {
+        std::cerr << "Error: " << e.error() << " for arg " << e.argId() << std::endl;
+        return 1;
+    }
+
+    const int command_line_port = portArg.getValue();
+    const bool command_line_use_gpu = gpuArg.getValue();
+    const std::string command_line_checkpoint =
+            checkpointArg.getValue();
+
+    port = command_line_port;
+    use_gpu = command_line_use_gpu;
+    checkpoint_path = command_line_checkpoint;
+
+
+    std::cout << "Command Line Arguments:" << std::endl;
+    std::cout << "Port: " << command_line_port << std::endl;
+    std::cout << "Use GPU: "
+            << (command_line_use_gpu ? "true" : "false")
+            << std::endl;
+    std::cout << "Checkpoint Path: \n\t"
+            << command_line_checkpoint
+            << std::endl;
+    std::cout << std::endl;
+
+    return 0;
+}
+
+[[noreturn]] int main(int argc, char *argv[]) {
+    // Set up signal handling
+    std::signal(SIGINT, signal_handler);
+
+    print_hello();
+
+    if (
+        const auto command_ret = command_line(argc, argv);
+        command_ret != 0
+    ) {
+        return command_ret;
+    }
+
+    if (use_gpu) {
+        CAS_OCR::set_model_gpu_support(use_gpu);
+    }
+    if (
+        !CAS_OCR::init_model(
+            checkpoint_path,
+            "fp32"
+        )
+    ) {
+        std::cerr << "Error initializing model" << std::endl;
+        return -1;
+    }
+
+    std::cout << "Load Model Success" << std::endl;
+
+    Poco::Net::ServerSocket srv;
+
+    try {
+        const auto address =
+                Poco::Net::SocketAddress("0.0.0.0", port);
+        srv.bind(address);
+        srv.listen();
+        std::cout << "Server started, listening on " << address.toString() << std::endl;
+    } catch (Poco::Exception &e) {
+        std::cerr << "Failed to bind to port " << port << "\n";
+        std::cout << e.displayText() << std::endl;
+
+        CAS_OCR::release_model();
+
+        exit(-1);
+    }
+
+    // Create a new thread to monitor client connect
+    std::thread monitor_thread(monitor_in, std::ref(srv));
+    // Detach the thread to execute independently in the background
+    monitor_thread.detach();
+
+    while (g_running) {
+    }
+
+    // Stop listening
+    srv.close();
+
+    // Must release model especially using GPU.
+    CAS_OCR::release_model();
 
     return 0;
 }
