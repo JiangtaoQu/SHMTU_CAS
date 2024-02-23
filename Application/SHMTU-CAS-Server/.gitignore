@@ -1,1 +1,4 @@
 build/
+3rdparty/
+
+.vscode/settings.json

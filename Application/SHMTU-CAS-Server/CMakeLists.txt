@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 project(SHMTU_CAS_Server)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 message(STATUS "System: ${CMAKE_SYSTEM_NAME}")
@@ -47,6 +47,7 @@ add_executable(SHMTU_CAS_Server
         ${WINDOWS_ICON_RC_FILE}
 )
 
-target_link_libraries(SHMTU_CAS_Server ${OpenCV_LIBS})
-target_link_libraries(SHMTU_CAS_Server ${Poco_LIBRARIES})
-target_link_libraries(SHMTU_CAS_Server ncnn)
+target_link_libraries(SHMTU_CAS_Server PRIVATE ${OpenCV_LIBS})
+target_link_libraries(SHMTU_CAS_Server PRIVATE ${Poco_LIBRARIES})
+target_link_libraries(SHMTU_CAS_Server PRIVATE ncnn)
+target_link_libraries(SHMTU_CAS_Server PRIVATE fmt)

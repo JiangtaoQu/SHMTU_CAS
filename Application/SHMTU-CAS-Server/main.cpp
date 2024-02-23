@@ -7,6 +7,8 @@
 #include <thread>
 #include <csignal>
 
+#include <fmt/core.h>
+
 #include <tclap/CmdLine.h>
 
 #include <Poco/Net/ServerSocket.h>
@@ -20,6 +22,7 @@
 #include "CAS_OCR.h"
 
 // Define global variable
+std::string ip_addr = "0.0.0.0";
 int port = 21601;
 bool use_gpu = false;
 std::string checkpoint_path =
@@ -157,17 +160,24 @@ void monitor_in(Poco::Net::ServerSocket &srv) {
 
 void print_hello() {
     std::cout << "ShangHai Maritime Uninversity" << "\n";
-    std::cout << "SHMTU CAS OCR Server" << "\n";
-    std::cout << "Author:Haomin Kong" << "\n";
-    std::cout << "Date:2024/2/22" << "\n";
+    std::cout << "\tSHMTU CAS OCR Server" << "\n";
+    std::cout << "\tAuthor:Haomin Kong" << "\n";
+    std::cout << "\tDate:2024/2/22" << "\n";
     std::cout << std::endl;
 }
 
 int command_line(int argc, char *argv[]) {
     // Define command line arguments
+    TCLAP::ValueArg<std::string> ipArg(
+        "i", "ip",
+        fmt::format("Listen IP Address(default value: {})", ip_addr),
+        false, ip_addr,
+        "IP Address"
+    );
+
     TCLAP::ValueArg<int> portArg(
         "p", "port",
-        "The port number to use",
+        fmt::format("The port number to use(default value: {})", port),
         false, port,
         "port_number"
     );
@@ -200,6 +210,7 @@ int command_line(int argc, char *argv[]) {
 
     // Add to CmdLine
     TCLAP::CmdLine cmd("SHMTU CAS OCR Server", ' ', "1.0");
+    cmd.add(ipArg);
     cmd.add(portArg);
     cmd.add(gpuArg);
     cmd.add(checkpointArg);
@@ -214,27 +225,31 @@ int command_line(int argc, char *argv[]) {
     }
 
     // Get the value parsed by each arg.
-    const int command_line_port = portArg.getValue();
-    const bool command_line_use_gpu = gpuArg.getValue();
-    const std::string command_line_checkpoint =
+    const auto command_line_ip = ipArg.getValue();
+    const auto command_line_port = portArg.getValue();
+    const auto command_line_use_gpu = gpuArg.getValue();
+    const auto command_line_checkpoint =
             checkpointArg.getValue();
+    const auto command_line_use_fp16 = fp16Arg.getValue();
 
     // Set global variables
     port = command_line_port;
     use_gpu = command_line_use_gpu;
     checkpoint_path = command_line_checkpoint;
-    use_fp16 = fp16Arg.getValue();
+    use_fp16 = command_line_use_fp16;
+    ip_addr = command_line_ip;
 
     // Print command line arguments values
     std::cout << "Command Line Arguments:" << std::endl;
-    std::cout << "Port: " << command_line_port << std::endl;
-    std::cout << "Use GPU: "
+    std::cout << "\tIP Address: " << ip_addr << std::endl;
+    std::cout << "\tPort: " << command_line_port << std::endl;
+    std::cout << "\tUse GPU: "
             << (command_line_use_gpu ? "true" : "false")
             << std::endl;
-    std::cout << "Checkpoint Path: \n\t"
+    std::cout << "\tCheckpoint Path: \n\t"
             << command_line_checkpoint
             << std::endl;
-    std::cout << "Use FP16: "
+    std::cout << "\tUse FP16: "
             << (use_fp16 ? "true" : "false")
             << std::endl;
     std::cout << std::endl;

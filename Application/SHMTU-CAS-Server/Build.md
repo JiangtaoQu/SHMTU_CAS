@@ -22,7 +22,7 @@ You must install the following tools to build the project.
 ## Linux
 
 ```bash
-sudo apt install -y libtclap-dev libopencv-dev libpoco-dev
+sudo apt install -y libtclap-dev libopencv-dev libpoco-dev libfmt-dev
 ```
 
 Build or Download NCNN
@@ -32,5 +32,5 @@ Install Vulkan SDK
 ## macOS
 
 ```bash
-brew install tclap ncnn protobuf libomp opencv poco
+brew install tclap ncnn protobuf libomp opencv poco fmt
 ```
