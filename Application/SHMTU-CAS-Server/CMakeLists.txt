@@ -4,9 +4,18 @@ project(SHMTU_CAS_Server)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(OpenCV_DIR "./3rdparty/OpenCV/opencv500-vs2022/install")
-set(Poco_DIR "./3rdparty/Poco/poco-poco-1.13.2-build/install/cmake")
-set(ncnn_DIR "./3rdparty/NCNN/ncnn-vs2022-debug/install/lib/cmake/ncnn")
+if (WIN32)
+    # Windows
+
+    set(OpenCV_DIR "./3rdparty/OpenCV/opencv500-vs2022/install")
+    set(Poco_DIR "./3rdparty/Poco/poco-poco-1.13.2-build/install/cmake")
+    set(ncnn_DIR "./3rdparty/NCNN/ncnn-vs2022-debug/install/lib/cmake/ncnn")
+elseif (LINUX)
+    # Linux
+
+    set(ncnn_DIR "./3rdparty/NCNN/ncnn-vs2022-debug/install/lib/cmake/ncnn")
+endif ()
+# macOS can install via HomeBrew
 
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
