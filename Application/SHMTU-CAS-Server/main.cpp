@@ -244,9 +244,9 @@ int command_line(int argc, char *argv[]) {
 
     // Set global variables
     port = command_line_port;
-    use_gpu = command_line_use_gpu;
+    if (command_line_use_gpu) use_gpu = !use_gpu;
     checkpoint_path = command_line_checkpoint;
-    use_fp16 = command_line_use_fp16;
+    if (command_line_use_fp16) use_fp16 = !use_fp16;
     ip_addr = command_line_ip;
 
     // Print command line arguments values
