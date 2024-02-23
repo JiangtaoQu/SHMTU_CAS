@@ -47,10 +47,16 @@ if (WIN32)
     endif ()
 
     message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
-elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
-    # Linux
+else ()
+    if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+        set(LINUX ON)
+    endif ()
 
-    set(ncnn_DIR "./3rdparty/NCNN/ncnn-20240102-ubuntu-2204/lib/cmake/ncnn")
+    if (LINUX)
+        # Linux
+
+        set(ncnn_DIR "./3rdparty/NCNN/ncnn-20240102-ubuntu-2204/lib/cmake/ncnn")
+    endif ()
 endif ()
 # macOS can install via HomeBrew
 
@@ -98,4 +104,9 @@ endif ()
 target_link_libraries(SHMTU_CAS_Server PRIVATE ${OpenCV_LIBS})
 target_link_libraries(SHMTU_CAS_Server PRIVATE ${Poco_LIBRARIES})
 target_link_libraries(SHMTU_CAS_Server PRIVATE ncnn)
-target_link_libraries(SHMTU_CAS_Server PRIVATE fmt::fmt)
+
+if (LINUX)
+    target_link_libraries(SHMTU_CAS_Server PRIVATE fmt)
+else ()
+    target_link_libraries(SHMTU_CAS_Server PRIVATE fmt::fmt)
+endif ()
