@@ -7,6 +7,7 @@
 #include <thread>
 #include <csignal>
 
+#define FMT_HEADER_ONLY 1
 #include <fmt/core.h>
 
 #include <tclap/CmdLine.h>
@@ -20,6 +21,10 @@
 #include <opencv2/imgcodecs/imgcodecs.hpp>
 
 #include "CAS_OCR.h"
+
+#ifndef SHMTU_CAS_SERVER_VERSION
+#define SHMTU_CAS_SERVER_VERSION "0.0.1"
+#endif
 
 // Define global variable
 std::string ip_addr = "0.0.0.0";
@@ -160,7 +165,8 @@ void monitor_in(Poco::Net::ServerSocket &srv) {
 
 void print_hello() {
     std::cout << "ShangHai Maritime Uninversity" << "\n";
-    std::cout << "\tSHMTU CAS OCR Server" << "\n";
+    std::cout << "\tSHMTU CAS OCR Server"
+            << " V" << SHMTU_CAS_SERVER_VERSION << "\n";
     std::cout << "\tAuthor:Haomin Kong" << "\n";
     std::cout << "\tDate:2024/2/22" << "\n";
     std::cout << std::endl;
@@ -209,7 +215,11 @@ int command_line(int argc, char *argv[]) {
     );
 
     // Add to CmdLine
-    TCLAP::CmdLine cmd("SHMTU CAS OCR Server", ' ', "1.0");
+    TCLAP::CmdLine cmd(
+        "SHMTU CAS OCR Server",
+        ' ',
+        SHMTU_CAS_SERVER_VERSION
+    );
     cmd.add(ipArg);
     cmd.add(portArg);
     cmd.add(gpuArg);
@@ -263,10 +273,8 @@ int main(const int argc, char *argv[]) {
 
     print_hello();
 
-    if (
-        const auto command_ret = command_line(argc, argv);
-        command_ret != 0
-    ) {
+    const auto command_ret = command_line(argc, argv);
+    if (command_ret != 0) {
         return command_ret;
     }
 
