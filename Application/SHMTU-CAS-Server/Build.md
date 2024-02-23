@@ -27,6 +27,8 @@ sudo apt install -y libtclap-dev libopencv-dev libpoco-dev
 
 Build or Download NCNN
 
+Install Vulkan SDK
+
 ## macOS
 
 ```bash

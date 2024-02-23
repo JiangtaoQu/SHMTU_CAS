@@ -4,16 +4,17 @@ project(SHMTU_CAS_Server)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+message(STATUS "System: ${CMAKE_SYSTEM_NAME}")
 if (WIN32)
     # Windows
 
     set(OpenCV_DIR "./3rdparty/OpenCV/opencv500-vs2022/install")
     set(Poco_DIR "./3rdparty/Poco/poco-poco-1.13.2-build/install/cmake")
     set(ncnn_DIR "./3rdparty/NCNN/ncnn-vs2022-debug/install/lib/cmake/ncnn")
-elseif (LINUX)
+elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
     # Linux
-
-    set(ncnn_DIR "./3rdparty/NCNN/ncnn-vs2022-debug/install/lib/cmake/ncnn")
+    
+    set(ncnn_DIR "./3rdparty/NCNN/ncnn-20240102-ubuntu-2204/lib/cmake/ncnn")
 endif ()
 # macOS can install via HomeBrew
 

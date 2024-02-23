@@ -242,7 +242,7 @@ int command_line(int argc, char *argv[]) {
     return 0;
 }
 
-[[noreturn]] int main(const int argc, char *argv[]) {
+int main(const int argc, char *argv[]) {
     // Set up signal handling
     std::signal(SIGINT, signal_handler);
 
