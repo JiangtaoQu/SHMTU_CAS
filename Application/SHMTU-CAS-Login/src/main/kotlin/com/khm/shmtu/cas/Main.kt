@@ -1,17 +1,16 @@
 package com.khm.shmtu.cas
 
-import com.khm.shmtu.cas.auth.WechatAuth
+import com.khm.shmtu.cas.demo.HotWaterDemo
+import com.khm.shmtu.cas.demo.BillDemo
 import com.khm.shmtu.cas.captcha.Captcha
-import com.khm.shmtu.cas.parser.BillParser
-
 
 fun main() {
+    // 热水数据获取测试
+    HotWaterDemo.testHotWater()
 
-//    val wechatAuth = WechatAuth()
-//    wechatAuth.login("", "")
-//    val hotWaterResult = wechatAuth.getHotWater()
-//    println(hotWaterResult.first)
-//    println(hotWaterResult.second)
+    // 账单数据获取测试
+    BillDemo.testBill()
 
+    // 验证码识别测试
     Captcha.testLocalTcpServerOcrMultiThread()
 }
