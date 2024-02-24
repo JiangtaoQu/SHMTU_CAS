@@ -80,6 +80,38 @@
                 android:text="GPU识别" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Server IP:" />
+            <EditText
+                android:id="@+id/editText_Ip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="nas.khm123.site"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Server Port:" />
+            <EditText
+                android:id="@+id/editText_Port"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="21601"/>
+
+            <Button
+                android:id="@+id/button_ocr_server"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OCR via Remote Server" />
+        </LinearLayout>
+
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="fill_parent"

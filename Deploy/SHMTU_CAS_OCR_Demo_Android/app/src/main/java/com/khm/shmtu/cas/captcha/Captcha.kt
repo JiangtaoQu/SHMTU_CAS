@@ -3,13 +3,8 @@ package com.khm.shmtu.cas.captcha
 import java.io.BufferedInputStream
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
-import java.io.File
 import java.net.Socket
 import java.net.URL
-import java.nio.file.Paths
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import javax.imageio.ImageIO
 
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -19,29 +14,6 @@ import java.net.SocketTimeoutException
 class Captcha {
 
     companion object {
-
-        fun readImageFromFile(fileName: String): ByteArray {
-            // Read image from file
-            val imageFile = File(fileName)
-            val image = ImageIO.read(imageFile)
-
-            // Convert image to byte array
-            val baos = ByteArrayOutputStream()
-            ImageIO.write(image, "png", baos)
-            val imageBytes = baos.toByteArray()
-            return imageBytes
-        }
-
-        fun saveImageToFile(imageData: ByteArray, directoryPath: String = ".") {
-            val currentDateTime = LocalDateTime.now()
-            val formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
-            val fileName = "captcha_${currentDateTime.format(formatter)}.png"
-            val filePath = Paths.get(directoryPath, fileName).toString()
-            java.io.FileOutputStream(filePath).use { fos ->
-                fos.write(imageData)
-            }
-            println("Image saved to file: $fileName")
-        }
 
         fun validateIPAddress(ip: String): Boolean {
             val ipAddressPattern = Regex(
@@ -142,6 +114,7 @@ class Captcha {
                     return response
                 } catch (e: SocketTimeoutException) {
                     // 超时，返回空字符串
+                    println("SocketTimeoutException")
                     return ""
                 }
             }
@@ -156,6 +129,8 @@ class Captcha {
 
             for (i in 1..retryTimes) {
 
+                println("第${i}次尝试远程识别验证码")
+                println("ip: ${host}, port: $port")
                 try {
                     result = ocrByRemoteTcpServer(host, port, imageData)
                 } catch (e: Exception) {
@@ -209,8 +184,6 @@ class Captcha {
                 getExprResultByExprString(validateCode)
             println(validateCode)
             println(exprResult)
-
-            saveImageToFile(imageData)
         }
 
         fun testLocalTcpServerOcrMultiThread(times: Int = 10) {

@@ -10,9 +10,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import com.khm.shmtu.cas.captcha.Captcha
+import com.khm.shmtu.cas.captcha.CaptchaAndroid
 import com.khm.shmtu.cas.ocr.SHMTU_NCNN
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -106,6 +109,74 @@ class MainActivity : Activity(), CoroutineScope by MainScope() {
         buttonDetect.setOnClickListener { doOcrDemo(false) }
         val buttonDetectGPU = findViewById<View>(R.id.buttonDetectGPU) as Button
         buttonDetectGPU.setOnClickListener { doOcrDemo(true) }
+
+        val buttonOcrViaRemoteServer = findViewById<Button>(R.id.button_ocr_server)
+        buttonOcrViaRemoteServer.setOnClickListener {
+            ocrViaRemoteServer()
+        }
+    }
+
+    private fun ocrViaRemoteServer() {
+        if (innerBitmap == null) {
+            Toast.makeText(
+                this@MainActivity,
+                "Please import an image first!",
+                Toast.LENGTH_SHORT
+            )
+                .show()
+            return
+        }
+
+        val editTextIp = findViewById<EditText>(R.id.editText_Ip)
+        val editTextPort = findViewById<EditText>(R.id.editText_Port)
+
+        val ip =
+            editTextIp.text.trim().toString()
+        val port =
+            editTextPort.text.trim().toString()
+
+        if (!Captcha.validateIPAddress(ip)) {
+            Toast.makeText(
+                this@MainActivity,
+                "Invalid IP address!",
+                Toast.LENGTH_SHORT
+            )
+                .show()
+            return
+        }
+
+        if (!Captcha.validatePort(port)) {
+            Toast.makeText(
+                this@MainActivity,
+                "Invalid port number!",
+                Toast.LENGTH_SHORT
+            )
+                .show()
+            return
+        }
+
+        Thread {
+            val imageData =
+                CaptchaAndroid.AndroidBitmapToByteArray(innerBitmap!!)
+
+            val result =
+                Captcha.ocrByRemoteTcpServerAutoRetry(
+                    ip,
+                    port.toInt(),
+                    imageData
+                )
+
+            if (result.isBlank()) {
+                Toast.makeText(
+                    this@MainActivity,
+                    "OCR via Remote Server failed!",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+            } else {
+                infoResult!!.text = result
+            }
+        }.start()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
