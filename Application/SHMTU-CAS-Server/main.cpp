@@ -40,8 +40,11 @@ volatile sig_atomic_t g_running = true;
 // Signal handler function
 void signal_handler(int signal) {
     if (signal == SIGINT) {
-        std::cout << "Received SIGINT signal. Exiting..." << std::endl;
-        g_running = false; // Set the exit flag to false
+        std::cout
+                << "Received SIGINT signal. Exiting..."
+                << std::endl;
+        // Set the exit flag to false
+        g_running = false;
     }
 }
 
@@ -54,11 +57,24 @@ std::string convert_bool_to_std_string(const bool value) {
 
 bool decode_image(const std::string &image_data, cv::Mat &image) {
     try {
-        const std::vector<uchar> data(image_data.begin(), image_data.end());
-        image = cv::imdecode(data, cv::IMREAD_COLOR);
-        cv::resize(image, image, cv::Size(400, 140));
+        const std::vector<uchar> data(
+            image_data.begin(),
+            image_data.end()
+        );
+        image =
+                cv::imdecode(
+                    data,
+                    cv::IMREAD_COLOR
+                );
+        cv::resize(
+            image, image,
+            cv::Size(400, 140)
+        );
     } catch (cv::Exception &ex) {
-        std::cerr << "Error decoding image: " << ex.what() << std::endl;
+        std::cerr
+                << "Error decoding image: "
+                << ex.what()
+                << std::endl;
         return false;
     }
 
@@ -79,7 +95,10 @@ void handle_client(Poco::Net::StreamSocket client, const std::string &peerAddres
         try {
             char buffer[1024];
             const int bytes_received =
-                    client.receiveBytes(buffer, sizeof(buffer));
+                    client.receiveBytes(
+                        buffer,
+                        sizeof(buffer)
+                    );
             if (bytes_received <= 0) {
                 break;
             }
@@ -101,24 +120,35 @@ void handle_client(Poco::Net::StreamSocket client, const std::string &peerAddres
     }
 
     // Calc Size
-    std::cout << "[" << peerAddress << "] " <<
-            "Image Size: " << image_data.length() << " B" << std::endl;
+    std::cout
+            << "[" << peerAddress << "] " <<
+            "Image Size: " << image_data.length() << " B"
+            << std::endl;
 
     if (receive_error) {
-        std::cerr << "[" << peerAddress << "] Error receiving data!" << std::endl;
+        std::cerr
+                << "[" << peerAddress << "] "
+                << "Error receiving data!"
+                << std::endl;
         return;
     }
 
-    std::cout << "[" << peerAddress << "] Received image data" << std::endl;
+    std::cout
+            << "[" << peerAddress << "] "
+            << "Received image data"
+            << std::endl;
 
     cv::Mat image;
     if (!decode_image(image_data, image)) {
-        std::cerr << "[" << peerAddress << "] Error decoding image" << std::endl;
+        std::cerr
+                << "[" << peerAddress << "] "
+                << "Error decoding image"
+                << std::endl;
         return;
     }
 
-    std::cout << "[" << peerAddress << "] " <<
-            "Image Decode Success"
+    std::cout << "[" << peerAddress << "] "
+            << "Image Decode Success"
             << std::endl;
 
     // Add image processing and prediction logic here
@@ -127,20 +157,32 @@ void handle_client(Poco::Net::StreamSocket client, const std::string &peerAddres
 
     const std::string result =
             std::get<1>(predict_result);
-    std::cout << "[" << peerAddress << "] " << result << std::endl;
+    std::cout
+            << "[" << peerAddress << "] "
+            << result
+            << std::endl;
     try {
         client.sendBytes(
             result.c_str(),
             static_cast<int>(result.length())
         );
-        std::cout << "[" << peerAddress << "] " << "Send Successed!" << std::endl;
+        std::cout
+                << "[" << peerAddress << "] "
+                << "Send Successed!"
+                << std::endl;
     } catch (Poco::Exception &ex) {
-        std::cerr << "[" << peerAddress << "] Error sending result: " << ex.displayText() <<
-                std::endl;
+        std::cerr
+                << "[" << peerAddress << "] "
+                << "Error sending result: "
+                << ex.displayText()
+                << std::endl;
     }
 
     client.close();
-    std::cout << "[" << peerAddress << "] Connection closed" << std::endl;
+    std::cout
+            << "[" << peerAddress << "] "
+            << "Connection closed"
+            << std::endl;
 }
 
 void monitor_in(Poco::Net::ServerSocket &srv) {
@@ -158,36 +200,58 @@ void monitor_in(Poco::Net::ServerSocket &srv) {
 
         const std::string peerAddress =
                 client.peerAddress().toString();
-        std::cout << "Connection from: " << peerAddress << std::endl;
+        std::cout
+                << "Connection from: "
+                << peerAddress
+                << std::endl;
 
         // Create a new thread to handle the client connection
-        std::thread client_thread(handle_client, std::move(client), peerAddress);
+        std::thread client_thread(
+            handle_client,
+            std::move(client),
+            peerAddress
+        );
         // Detach the thread to execute independently in the background
         client_thread.detach();
     }
 }
 
 void print_hello() {
-    std::cout << "ShangHai Maritime Uninversity" << "\n";
-    std::cout << "\tSHMTU CAS OCR Server"
-            << " V" << SHMTU_CAS_SERVER_VERSION << "\n";
-    std::cout << "\tAuthor:Haomin Kong" << "\n";
-    std::cout << "\tDate:2024/2/22" << "\n";
-    std::cout << std::endl;
+    std::cout
+            << "ShangHai Maritime Uninversity"
+            << "\n";
+    std::cout
+            << "\tSHMTU CAS OCR Server"
+            << " V" << SHMTU_CAS_SERVER_VERSION
+            << "\n";
+    std::cout
+            << "\tAuthor:Haomin Kong"
+            << "\n";
+    std::cout
+            << "\tDate:2024/2/22"
+            << "\n";
+    std::cout
+            << std::endl;
 }
 
 int command_line(int argc, char *argv[]) {
     // Define command line arguments
     TCLAP::ValueArg<std::string> ipArg(
         "i", "ip",
-        fmt::format("Listen IP Address(default value: {})", ip_addr),
+        fmt::format(
+            "Listen IP Address(default value: {})",
+            ip_addr
+        ),
         false, ip_addr,
         "IP Address"
     );
 
     TCLAP::ValueArg<int> portArg(
         "p", "port",
-        fmt::format("The port number to use(default value: {})", port),
+        fmt::format(
+            "The port number to use(default value: {})",
+            port
+        ),
         false, port,
         "port_number"
     );
@@ -204,7 +268,10 @@ int command_line(int argc, char *argv[]) {
 
     TCLAP::ValueArg<std::string> checkpointArg(
         "c", "checkpoint",
-        fmt::format("Checkpoint directory path (default: {})", checkpoint_path),
+        fmt::format(
+            "Checkpoint directory path (default: {})",
+            checkpoint_path
+        ),
         false, checkpoint_path,
         "Directory Path"
     );
@@ -234,17 +301,23 @@ int command_line(int argc, char *argv[]) {
     try {
         cmd.parse(argc, argv);
     } catch (TCLAP::ArgException &e) {
-        std::cerr << "Error: " << e.error() << " for arg " << e.argId() << std::endl;
+        std::cerr << "Error: " << e.error()
+                << " for arg " << e.argId()
+                << std::endl;
         return 1;
     }
 
     // Get the value parsed by each arg.
-    const auto command_line_ip = ipArg.getValue();
-    const auto command_line_port = portArg.getValue();
-    const auto command_line_use_gpu = gpuArg.getValue();
+    const auto command_line_ip =
+            ipArg.getValue();
+    const auto command_line_port =
+            portArg.getValue();
+    const auto command_line_use_gpu =
+            gpuArg.getValue();
     const auto command_line_checkpoint =
             checkpointArg.getValue();
-    const auto command_line_use_fp16 = fp16Arg.getValue();
+    const auto command_line_use_fp16 =
+            fp16Arg.getValue();
 
     // Set global variables
     port = command_line_port;
@@ -254,18 +327,27 @@ int command_line(int argc, char *argv[]) {
     ip_addr = command_line_ip;
 
     // Print command line arguments values
-    std::cout << "Command Line Arguments:" << std::endl;
-    std::cout << "\tIP Address: " << ip_addr << std::endl;
-    std::cout << "\tPort: " << command_line_port << std::endl;
-    std::cout << "\tUse GPU: "
+    std::cout
+            << "Command Line Arguments:"
+            << "\n";
+    std::cout
+            << "\tIP Address: " << ip_addr
+            << "\n";
+    std::cout
+            << "\tPort: " << command_line_port
+            << "\n";
+    std::cout
+            << "\tUse GPU: "
             << (command_line_use_gpu ? "true" : "false")
-            << std::endl;
-    std::cout << "\tCheckpoint Path: \n\t"
+            << "\n";
+    std::cout
+            << "\tCheckpoint Path: \n\t"
             << command_line_checkpoint
-            << std::endl;
-    std::cout << "\tUse FP16: "
+            << "\n";
+    std::cout
+            << "\tUse FP16: "
             << (use_fp16 ? "true" : "false")
-            << std::endl;
+            << "\n";
     std::cout << std::endl;
 
     return 0;
@@ -301,12 +383,17 @@ int main(const int argc, char *argv[]) {
 
     try {
         const auto address =
-                Poco::Net::SocketAddress("0.0.0.0", port);
+                Poco::Net::SocketAddress(ip_addr, port);
         srv.bind(address);
         srv.listen();
-        std::cout << "Server started, listening on " << address.toString() << std::endl;
+        std::cout
+                << "Server started, listening on "
+                << address.toString()
+                << std::endl;
     } catch (Poco::Exception &e) {
-        std::cerr << "Failed to bind to port " << port << "\n";
+        std::cerr
+                << "Failed to bind to port " << port
+                << "\n";
         std::cout << e.displayText() << std::endl;
 
         CAS_OCR::release_model();
