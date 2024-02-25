@@ -181,7 +181,10 @@ class Captcha {
             return ""
         }
 
-        fun testLocalTcpServerOcr() {
+        fun testLocalTcpServerOcr(
+            ip: String = "127.0.0.1",
+            port: Int = 21601,
+        ) {
             println("识别验证码 Test")
             val resultCaptcha =
                 getImageDataFromUrlUsingGet()
@@ -199,11 +202,16 @@ class Captcha {
                 return
             }
 
+            val startTime = System.currentTimeMillis()
             val validateCode =
                 ocrByRemoteTcpServerAutoRetry(
-                    "127.0.0.1", 21601,
+                    ip, port,
                     imageData
                 )
+            // 计算代码执行时间
+            val endTime = System.currentTimeMillis()
+            val executionTime = endTime - startTime
+            println("OCR执行时间: $executionTime 毫秒")
 
             val exprResult =
                 getExprResultByExprString(validateCode)

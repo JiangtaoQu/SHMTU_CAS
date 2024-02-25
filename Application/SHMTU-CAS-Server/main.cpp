@@ -100,6 +100,10 @@ void handle_client(Poco::Net::StreamSocket client, const std::string &peerAddres
         }
     }
 
+    // Calc Size
+    std::cout << "[" << peerAddress << "] " <<
+            "Image Size: " << image_data.length() << " B" << std::endl;
+
     if (receive_error) {
         std::cerr << "[" << peerAddress << "] Error receiving data!" << std::endl;
         return;
