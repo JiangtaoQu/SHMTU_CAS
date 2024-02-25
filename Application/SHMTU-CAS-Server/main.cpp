@@ -204,7 +204,7 @@ int command_line(int argc, char *argv[]) {
 
     TCLAP::ValueArg<std::string> checkpointArg(
         "c", "checkpoint",
-        "Checkpoint directory path",
+        fmt::format("Checkpoint directory path (default: {})", checkpoint_path),
         false, checkpoint_path,
         "Directory Path"
     );
