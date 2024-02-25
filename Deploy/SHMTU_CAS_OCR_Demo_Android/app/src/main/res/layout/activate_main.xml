@@ -88,22 +88,24 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Server IP:" />
+                android:text="Server Host:" />
+
             <EditText
                 android:id="@+id/editText_Ip"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="nas.khm123.site"/>
+                android:layout_height="48sp"
+                android:text="nas.khm123.site" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Server Port:" />
+
             <EditText
                 android:id="@+id/editText_Port"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="21601"/>
+                android:layout_height="48sp"
+                android:text="21601" />
 
             <Button
                 android:id="@+id/button_ocr_server"

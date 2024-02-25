@@ -37,15 +37,17 @@ class MainActivity : Activity(), CoroutineScope by MainScope() {
         setContentView(R.layout.activate_main)
 
         // 设置屏幕方向为竖屏模式
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        requestedOrientation =
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
 
         initWidget()
     }
 
     private fun doOcrDemo(useGpu: Boolean) {
         if (innerBitmap == null) return
-        val result_obj = shmtuNcnn.predict_validate_code(innerBitmap, useGpu)
-        if (result_obj == null) {
+        val resultObj =
+            shmtuNcnn.predict_validate_code(innerBitmap, useGpu)
+        if (resultObj == null) {
             Toast.makeText(
                 this@MainActivity,
                 "detect failed!",
@@ -54,7 +56,7 @@ class MainActivity : Activity(), CoroutineScope by MainScope() {
                 .show()
             return
         }
-        infoResult!!.text = result_obj[1] as String
+        infoResult!!.text = resultObj[1] as String
     }
 
     private fun initWidget() {
@@ -135,10 +137,10 @@ class MainActivity : Activity(), CoroutineScope by MainScope() {
         val port =
             editTextPort.text.trim().toString()
 
-        if (!Captcha.validateIPAddress(ip)) {
+        if (ip.isBlank()) {
             Toast.makeText(
                 this@MainActivity,
-                "Invalid IP address!",
+                "Invalid host!",
                 Toast.LENGTH_SHORT
             )
                 .show()
@@ -167,12 +169,14 @@ class MainActivity : Activity(), CoroutineScope by MainScope() {
                 )
 
             if (result.isBlank()) {
-                Toast.makeText(
-                    this@MainActivity,
-                    "OCR via Remote Server failed!",
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
+                runOnUiThread {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "OCR via Remote Server failed!",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
             } else {
                 infoResult!!.text = result
             }
