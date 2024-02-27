@@ -21,6 +21,8 @@ You must install the following tools to build the project.
 
 ## Linux
 
+### Ubuntu
+
 ```bash
 sudo apt install -y libtclap-dev libopencv-dev libpoco-dev libfmt-dev
 ```
@@ -28,6 +30,16 @@ sudo apt install -y libtclap-dev libopencv-dev libpoco-dev libfmt-dev
 Build or Download NCNN
 
 Install Vulkan SDK
+
+### Arch Linux
+
+```bash
+sudo pacman -S opencv poco fmt ncnn tclap
+
+# Vulkan SDK(Optional)
+sudo pacman -S vulkan-headers vulkan-validation-layers vulkan-tools
+vulkaninfo
+```
 
 ## macOS
 

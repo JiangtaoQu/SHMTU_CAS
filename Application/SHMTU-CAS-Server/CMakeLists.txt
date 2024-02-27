@@ -50,17 +50,32 @@ if (WIN32)
 else ()
     if (CMAKE_SYSTEM_NAME MATCHES "Linux")
         set(LINUX ON)
+
+        execute_process(COMMAND pacman --version RESULT_VARIABLE PACMAN_RESULT OUTPUT_QUIET ERROR_QUIET)
+
+        if (PACMAN_RESULT EQUAL 0)
+            message("pacman is available on this system.")
+            # Do something specific when pacman is available
+            set(PACMAN_AVAILABLE ON)
+        else ()
+            message("pacman is not available on this system.")
+            # Do something specific when pacman is not available
+            set(PACMAN_AVAILABLE OFF)
+        endif ()
     endif ()
 
     if (LINUX)
         # Linux
 
-        set(ncnn_DIR "./3rdparty/NCNN/ncnn-20240102-ubuntu-2204/lib/cmake/ncnn")
+        if (NOT PACMAN_AVAILABLE)
+            set(ncnn_DIR "./3rdparty/NCNN/ncnn-20240102-ubuntu-2204/lib/cmake/ncnn")
+        endif ()
+
     endif ()
 endif ()
 # macOS can install via HomeBrew
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV REQUIRED COMPONENTS core imgproc imgcodecs)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 find_package(Poco REQUIRED COMPONENTS Foundation Net)
