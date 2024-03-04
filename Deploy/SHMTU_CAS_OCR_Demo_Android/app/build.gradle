@@ -4,6 +4,10 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        release {
+        }
+    }
     namespace 'com.khm.shmtu.cas.ocr.demo'
     compileSdk 34
 
@@ -43,7 +47,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0'
 
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
