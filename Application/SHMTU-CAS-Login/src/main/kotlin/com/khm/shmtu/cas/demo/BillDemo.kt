@@ -8,7 +8,13 @@ class BillDemo {
 
         fun testBill() {
             val epayAuth = EpayAuth()
-            epayAuth.login("", "")
+            val isSuccess =
+                epayAuth.login("", "")
+            println(isSuccess)
+            if (!isSuccess) {
+                println("Login failed!")
+                return
+            }
             val billResult =
                 epayAuth.getBill(pageNo = "1")
             println(billResult.first)

@@ -6,10 +6,10 @@ import com.khm.shmtu.cas.captcha.Captcha
 
 fun main() {
     // 热水数据获取测试
-//    HotWaterDemo.testHotWater()
+    HotWaterDemo.testHotWater()
 
     // 账单数据获取测试
-//    BillDemo.testBill()
+    BillDemo.testBill()
 
     // 验证码识别测试
     Captcha.testLocalTcpServerOcrMultiThread(1)

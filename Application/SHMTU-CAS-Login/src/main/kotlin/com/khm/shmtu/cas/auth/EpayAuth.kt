@@ -1,6 +1,5 @@
 package com.khm.shmtu.cas.auth
 
-import com.khm.shmtu.cas.HtmlCommon
 import com.khm.shmtu.cas.auth.common.CasAuth
 import com.khm.shmtu.cas.captcha.Captcha
 import okhttp3.OkHttpClient
@@ -29,9 +28,13 @@ class EpayAuth {
             .followSslRedirects(false)
             .build()
 
+        val finalCookie = cookie.ifBlank {
+            this.savedCookie
+        }
+
         val request = Request.Builder()
             .url(url)
-            .addHeader("Cookie", cookie)
+            .addHeader("Cookie", finalCookie)
             .get()
             .build()
 
@@ -40,16 +43,25 @@ class EpayAuth {
         val responseCode = response.code
 
         return if (responseCode == 200) {
-            htmlCode = (response.body?.string() ?: "").trim()
+            this.htmlCode = (response.body?.string() ?: "").trim()
 
-            Triple(responseCode, htmlCode, cookie)
+            Triple(responseCode, this.htmlCode, cookie)
         } else if (responseCode == 302) {
             val location =
                 response.header("Location") ?: ""
-            val newCookie =
-                response.header("Set-Cookie") ?: cookie
 
-            savedCookie = newCookie
+            // Get all "Set-Cookie" Header
+            val setCookieHeaders: List<String> =
+                response.headers.values("Set-Cookie")
+
+            var newCookie = cookie
+            for (currentSetCookie in setCookieHeaders) {
+                if (currentSetCookie.contains("JSESSIONID")) {
+                    newCookie = currentSetCookie
+                }
+            }
+
+            this.savedCookie = newCookie
 
             Triple(responseCode, location, newCookie)
         } else {
@@ -59,7 +71,7 @@ class EpayAuth {
 
     fun testLoginStatus(): Boolean {
         val resultBill =
-            getBill(cookie = savedCookie)
+            getBill(cookie = this.savedCookie)
 
         if (resultBill.first == 200) {
             // OK
@@ -67,7 +79,7 @@ class EpayAuth {
         } else if (resultBill.first == 302) {
             this.loginUrl =
                 resultBill.second
-            this.loginCookie =
+            this.savedCookie =
                 resultBill.third
 
             return false
@@ -81,7 +93,7 @@ class EpayAuth {
         password: String
     ): Boolean {
 
-        if (loginUrl.isBlank() || loginCookie.isBlank()) {
+        if (this.loginUrl.isBlank() || this.savedCookie.isBlank()) {
             if (testLoginStatus()) {
                 return true
             }
@@ -90,12 +102,14 @@ class EpayAuth {
         val executionStr =
             CasAuth.getExecution(
                 this.loginUrl,
-                this.loginCookie
+                this.savedCookie
             )
 
         // 下载验证码
         val resultCaptcha =
-            Captcha.getImageDataFromUrlUsingGet(cookie = savedCookie)
+            Captcha.getImageDataFromUrlUsingGet(
+                cookie = this.savedCookie
+            )
 
         // 检验下载的数据
         if (resultCaptcha == null) {
@@ -103,7 +117,7 @@ class EpayAuth {
             return false
         }
         val imageData = resultCaptcha.first
-        savedCookie = resultCaptcha.second
+        this.loginCookie = resultCaptcha.second
         if (imageData == null) {
             println("获取验证码失败")
             return false
@@ -125,7 +139,7 @@ class EpayAuth {
                 password,
                 exprResult,
                 executionStr,
-                savedCookie
+                this.loginCookie
             )
 
         if (resultCas.first != 302) {
@@ -133,16 +147,22 @@ class EpayAuth {
             return false
         }
 
+        this.loginCookie = resultCas.third
+
         val resultRedirect =
             CasAuth.casRedirect(
                 resultCas.second,
-                resultCas.third
+                this.savedCookie
             )
 
-        savedCookie = resultRedirect.third
+        if (resultRedirect.first != 302) {
+            println("Login Ok,but cannot redirect to bill page.")
+            println("Status code：${resultRedirect.first}")
+            return false
+        }
 
         val resultBill =
-            getBill(cookie = savedCookie)
+            getBill(cookie = this.savedCookie)
 
         return resultBill.first == 200
     }
