@@ -2,6 +2,7 @@
 # CMAKE_CXX_STANDARD requires 3.12 and the convenience function
 # `FetchContent_MakeAvailable` was introduced in CMake 3.14
 cmake_minimum_required(VERSION 3.14)
+message(STATUS "CMake version: ${CMAKE_VERSION}")
 
 if (NOT DEFINED CMAKE_BUILD_TYPE)
     set(
@@ -9,6 +10,7 @@ if (NOT DEFINED CMAKE_BUILD_TYPE)
             CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE
     )
 endif ()
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
 if (NOT DEFINED CMAKE_INSTALL_PREFIX)
     set(
@@ -16,6 +18,7 @@ if (NOT DEFINED CMAKE_INSTALL_PREFIX)
             CACHE PATH "Install path prefix, prepended onto install directories." FORCE
     )
 endif ()
+message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
 
 project(SHMTU_CAS_Server VERSION 1.0.0)
 
