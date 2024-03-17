@@ -22,7 +22,19 @@
 ## 模型的训练
 
 具体请参考:
-[Train/README.md](Train/README.md)
+[Train/README.md](Train/README.md
+
+### 数据集
+
+我训练模型所使用的数据集已经公开在下面的网址：
+
+https://huggingface.co/datasets/a645162/shmtu_cas_validate_code
+
+https://ai.gitee.com/datasets/a645162/shmtu_cas_validate_code
+
+任选一个下载即可！
+
+数据集的具体制作方式请参考LaTeX文档。
 
 ## Windows平台部署
 
